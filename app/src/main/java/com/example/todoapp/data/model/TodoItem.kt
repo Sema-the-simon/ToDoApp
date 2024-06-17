@@ -8,4 +8,4 @@ data class TodoItem(
     var isDone: Boolean = false,
     val creationDate: Long,
     var modificationDate: Long? = null
-)
+) : RecyclerItem
