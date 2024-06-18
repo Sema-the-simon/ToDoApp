@@ -13,7 +13,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.todoapp.ui.navigation.Edit
 import com.example.todoapp.ui.navigation.List
+import com.example.todoapp.ui.screens.edit.EditScreen
+import com.example.todoapp.ui.screens.edit.EditViewModel
 import com.example.todoapp.ui.screens.list.ListScreen
 import com.example.todoapp.ui.screens.list.ListViewModel
 
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 NavHost(
                     modifier = Modifier,
                     navController = navController,
-                    startDestination = List.route
+                    startDestination = Edit.route
                 ) {
 
                     composable(List.route) {
@@ -37,10 +40,21 @@ class MainActivity : AppCompatActivity() {
                         val listUiState by listViewModel.uiState.collectAsState()
                         ListScreen(
                             navController = navController,
-                            listUiState,
-                            listViewModel::onUiAction,
-                            {},
-                            {}
+                            uiState = listUiState,
+                            onUiAction = listViewModel::onUiAction,
+                            navigateToNewItem = {},
+                            navigateToEditItem = {}
+                        )
+                    }
+
+                    composable(Edit.route) {
+                        val editViewModel : EditViewModel = viewModel()
+                        val editUiState by editViewModel.uiState.collectAsState()
+                        EditScreen(
+                            navController = navController,
+                            uiState = editUiState,
+                            onUiAction = editViewModel ::onUiAction,
+                            navigateUp = {}
                         )
                     }
                 }

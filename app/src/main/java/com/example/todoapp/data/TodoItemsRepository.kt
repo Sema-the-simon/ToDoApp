@@ -10,6 +10,8 @@ class TodoItemsRepository() : Repository {
     private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(getData())
     override val todoItems = _todoItems.asStateFlow()
 
+    override fun countDoneTodos(): Int = _todoItems.value.count { it.isDone }
+
     override fun addTodoItem(todoItem: TodoItem) {
         _todoItems.update {
             val updatedList = todoItems.value.toMutableList()
@@ -17,8 +19,6 @@ class TodoItemsRepository() : Repository {
             updatedList.toList()
         }
     }
-
-    override fun countDoneTodos(): Int = _todoItems.value.count { it.isDone }
 
     override fun updateItem(todoItem: TodoItem) {
         val containsTodoItem = _todoItems.value.any { it.id == todoItem.id }
@@ -42,4 +42,6 @@ class TodoItemsRepository() : Repository {
             }
         }
     }
+
+    override fun getTodoItem(id: String): TodoItem? = _todoItems.value.firstOrNull { it.id == id }
 }

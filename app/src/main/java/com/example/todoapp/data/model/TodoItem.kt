@@ -4,8 +4,8 @@ data class TodoItem(
     val id: String,
     val text: String,
     val importance: Importance,
-    var deadline: Long? = null,
-    var isDone: Boolean = false,
+    val deadline: Long? = null,
+    val isDone: Boolean = false,
     val creationDate: Long,
-    var modificationDate: Long? = null
+    val modificationDate: Long? = null
 )
