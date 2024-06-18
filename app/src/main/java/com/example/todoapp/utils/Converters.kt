@@ -6,7 +6,7 @@ import java.util.Locale
 
 
 fun formatLongToDatePattern(date: Long): String =
-    SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(unixToDate(date))
+    SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(date)
 
 fun unixToDate(date: Long) = Date(date * MS_IN_S)
 

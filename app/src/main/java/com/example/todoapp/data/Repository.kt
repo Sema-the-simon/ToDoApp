@@ -4,6 +4,9 @@ import com.example.todoapp.data.model.TodoItem
 import kotlinx.coroutines.flow.StateFlow
 
 interface Repository {
-    fun getTodoItems() : StateFlow<List<TodoItem>>
+    val todoItems: StateFlow<List<TodoItem>>
     fun addTodoItem(todoItem: TodoItem)
+    fun countDoneTodos(): Int
+    fun updateItem(todoItem: TodoItem)
+    fun removeItem(id: String)
 }

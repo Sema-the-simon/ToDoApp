@@ -4,4 +4,5 @@
     <string name="importance_normal">Basic</string>
     <string name="importance_urgent">!! Important</string>
     <string name="todolist_title">Мy Tasks</string>
+    <string name="list_title_tasks_count">Done - %1$d</string>
 </resources>
