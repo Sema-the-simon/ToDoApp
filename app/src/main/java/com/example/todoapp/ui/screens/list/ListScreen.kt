@@ -39,7 +39,7 @@ fun ListScreen(
 //    val viewModel: ListViewModel = viewModel()
 //    val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior =
-        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
 
     Scaffold(

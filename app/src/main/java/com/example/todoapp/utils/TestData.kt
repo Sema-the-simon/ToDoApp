@@ -78,7 +78,7 @@ fun getData(): MutableList<TodoItem> {
         )
     )
 
-    for (i in 7..15) {
+    for (i in 7..50) {
         data.add(
             TodoItem(
                 id = i.toString(),

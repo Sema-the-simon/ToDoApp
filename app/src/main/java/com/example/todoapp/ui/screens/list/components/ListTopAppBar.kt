@@ -1,9 +1,15 @@
 package com.example.todoapp.ui.screens.list.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
@@ -13,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
 import com.example.todoapp.ui.themes.LightBackPrimary
@@ -25,34 +32,50 @@ fun ListTopAppBar(
     doneTasks: Int = 0,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val collapse = scrollBehavior.state.collapsedFraction
+    val isTittleExpand = if (collapse < 0.07f) true else false
     LargeTopAppBar(
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.Bottom
             ) {
                 Column(
-                    modifier = Modifier //.padding(start = startPadding, top = topPadding)
+                    modifier = Modifier
+                        .padding(
+                            start = animateDpAsState(
+                                targetValue = if (isTittleExpand) 44.dp else 0.dp
+                            ).value
+                        )
                 ) {
                     Text(
                         text = stringResource(R.string.todolist_title),
                         color = LightLabelPrimary,
-                        fontSize = 32.sp
+                        fontSize = (animateIntAsState(targetValue = if (isTittleExpand) 32 else 20)).value.sp
                     )
-                    Text(
-                        text = stringResource(R.string.list_title_tasks_count, doneTasks),
-                        color = LightLabelTertiary,
-                        fontSize = 14.sp
-                    )
+                    AnimatedVisibility(
+                        visible = isTittleExpand,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.list_title_tasks_count,
+                                doneTasks
+                            ),
+                            color = LightLabelTertiary,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
-//                   TODO VisibilityIcon
             }
 
         },
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = LightBackPrimary,
+            scrolledContainerColor = LightBackPrimary
         )
     )
 }

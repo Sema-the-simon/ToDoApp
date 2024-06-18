@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="importance_low">Низкая</string>
+    <string name="importance_normal">Обычная</string>
+    <string name="importance_urgent">!! Высокая</string>
+    <string name="todolist_title">Мои дела</string>
+    <string name="list_title_tasks_count">Выполнено - %1$d</string>
+</resources>
