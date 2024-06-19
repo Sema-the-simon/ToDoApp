@@ -5,8 +5,10 @@ import com.example.todoapp.utils.getData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class TodoItemsRepository() : Repository {
+
+class TodoItemsRepository @Inject constructor() : Repository {
     private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(getData())
     override val todoItems = _todoItems.asStateFlow()
 

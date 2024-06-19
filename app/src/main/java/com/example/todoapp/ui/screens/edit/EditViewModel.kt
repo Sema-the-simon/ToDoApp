@@ -9,17 +9,20 @@ import com.example.todoapp.data.model.Importance
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.ui.navigation.Edit
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
+import javax.inject.Inject
 
-class EditViewModel(
+@HiltViewModel
+class EditViewModel @Inject constructor(
+    private val repository: Repository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val repository: Repository = TodoItemsRepository()
 
     private var todoItem = TodoItem(
         id = UUID.randomUUID().toString(),

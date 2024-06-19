@@ -6,14 +6,18 @@ import com.example.todoapp.data.Repository
 import com.example.todoapp.data.TodoItemsRepository
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.ui.screens.list.action.ListUiAction
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ListViewModel : ViewModel() {
-    private val repository: Repository = TodoItemsRepository()
+@HiltViewModel
+class ListViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ListUiState())
     val uiState = combine(
         _uiState,

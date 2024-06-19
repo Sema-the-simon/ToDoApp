@@ -13,9 +13,9 @@ object List : Destination {
 
 object Edit : Destination {
     const val ID = "id"
-    const val ROUT_WITH_ARGS = "edit/{id}"
+    private const val ROUTE = "edit"
 
-    override val route: String = "edit"
+    override val route: String =  "$ROUTE/{$ID}"
 
     val arguments = listOf(
         navArgument(ID) {
@@ -23,9 +23,9 @@ object Edit : Destination {
         }
     )
 
-    fun navToOrderWithArgs(
+    fun navToEditWithArgs(
         id: String = ""
     ): String {
-        return "$route/$id"
+        return "$ROUTE/$id"
     }
 }
