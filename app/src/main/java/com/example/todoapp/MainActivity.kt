@@ -9,7 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,7 +19,9 @@ import com.example.todoapp.ui.screens.edit.EditScreen
 import com.example.todoapp.ui.screens.edit.EditViewModel
 import com.example.todoapp.ui.screens.list.ListScreen
 import com.example.todoapp.ui.screens.list.ListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,29 +34,33 @@ class MainActivity : AppCompatActivity() {
                 NavHost(
                     modifier = Modifier,
                     navController = navController,
-                    startDestination = Edit.route
+                    startDestination = List.route
                 ) {
 
                     composable(List.route) {
-                        val listViewModel : ListViewModel = viewModel()
+                        val listViewModel: ListViewModel = hiltViewModel()
                         val listUiState by listViewModel.uiState.collectAsState()
                         ListScreen(
-                            navController = navController,
                             uiState = listUiState,
                             onUiAction = listViewModel::onUiAction,
-                            navigateToNewItem = {},
-                            navigateToEditItem = {}
+                            navigateToNewItem = { navController.navigate(Edit.route) },
+                            navigateToEditItem = { id -> navController.navigate(Edit.navToEditWithArgs(id)) }
                         )
                     }
 
-                    composable(Edit.route) {
-                        val editViewModel : EditViewModel = viewModel()
+                    composable(Edit.route, arguments = Edit.arguments) {
+                        val editViewModel: EditViewModel = hiltViewModel()
                         val editUiState by editViewModel.uiState.collectAsState()
                         EditScreen(
-                            navController = navController,
                             uiState = editUiState,
-                            onUiAction = editViewModel ::onUiAction,
-                            navigateUp = {}
+                            onUiAction = editViewModel::onUiAction,
+                            navigateUp = {
+                                navController.navigate(List.route) {
+                                    popUpTo(List.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
                         )
                     }
                 }

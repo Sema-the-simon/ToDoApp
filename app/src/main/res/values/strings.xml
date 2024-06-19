@@ -11,4 +11,8 @@
     <string name="importance_title">Importance</string>
     <string name="importance_close_button">Close importance chosing</string>
     <string name="importance_save_button">Save choseing importance</string>
+    <string name="deadline_title">Deadline</string>
+    <string name="deadline_calendar_ok">OK</string>
+    <string name="deadline_calendar_cancel">Cancel</string>
+    <string name="delete_title">Delete</string>
 </resources>

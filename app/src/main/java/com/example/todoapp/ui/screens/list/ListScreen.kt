@@ -17,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.screens.list.action.ListUiAction
 import com.example.todoapp.ui.screens.list.components.ListTopAppBar
 import com.example.todoapp.ui.screens.list.components.TodoList
@@ -30,14 +28,11 @@ import com.example.todoapp.utils.getData
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
-    navController: NavHostController,
     uiState: ListUiState,
     onUiAction: (ListUiAction) -> Unit,
     navigateToNewItem: () -> Unit,
-    navigateToEditItem: () -> Unit
+    navigateToEditItem: (String) -> Unit
 ) {
-//    val viewModel: ListViewModel = viewModel()
-//    val uiState by viewModel.uiState.collectAsState()
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -70,7 +65,7 @@ fun ListScreen(
         ) {
             TodoList(
                 todoList = uiState.todoItems,
-                onItemClick = { todoItem -> navigateToEditItem() },//navigation EDIT
+                onItemClick = { todoItem -> navigateToEditItem(todoItem.id) },//navigation EDIT
                 onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem)) },
                 onUpdate = { todoItem ->
                     onUiAction(
@@ -91,5 +86,5 @@ fun ListScreen(
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun PreviewListScreen() {
-    ListScreen(rememberNavController(), ListUiState(getData(), 1), {}, {}, {})
+    ListScreen(ListUiState(getData(), 1), {}, {}, {})
 }

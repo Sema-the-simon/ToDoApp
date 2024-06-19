@@ -50,7 +50,10 @@ fun EditTopAppBar(
             )
 
             TextButton(
-                onClick = { uiAction(EditUiAction.SaveTask) },
+                onClick = {
+                    uiAction(EditUiAction.SaveTask)
+                    navigateUp()
+                },
                 enabled = text.isNotBlank(),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = saveButtonColor,
