@@ -2,6 +2,7 @@ package com.example.todoapp.ui.screens.edit.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
@@ -42,7 +42,7 @@ import com.example.todoapp.utils.formatLongToDatePattern
 @Composable
 fun EditDeadlineField(
     deadline: Long,
-    isDateVisible: Boolean,
+    isDeadlineSet: Boolean,
     uiAction: (EditUiAction) -> Unit
 ) {
     Row(
@@ -52,23 +52,30 @@ fun EditDeadlineField(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val dateText = remember(deadline) { formatLongToDatePattern(deadline)  }
+        val dateText = remember(deadline) { formatLongToDatePattern(deadline) }
         var isDialogOpen by remember { mutableStateOf(false) }
 
-        Column {
+        Column(
+            if (isDeadlineSet)
+                Modifier.clickable {
+                    isDialogOpen = true
+                }
+            else
+                Modifier
+        ) {
             Text(
                 text = stringResource(id = R.string.deadline_title),
                 modifier = Modifier.padding(start = 5.dp),
                 color = LightLabelPrimary
             )
-            AnimatedVisibility(visible = isDateVisible) {
+            AnimatedVisibility(visible = isDeadlineSet) {
                 Box(modifier = Modifier.padding(5.dp)) {
                     Text(text = dateText, color = Blue)
                 }
             }
         }
         Switch(
-            checked = isDateVisible,
+            checked = isDeadlineSet,
             onCheckedChange = { checked ->
                 if (checked) {
                     isDialogOpen = true
@@ -144,7 +151,7 @@ fun PreviewDeadline() {
     Box(Modifier.background(LightBackPrimary)) {
         EditDeadlineField(
             deadline = 1696693800000L,
-            isDateVisible = true,
+            isDeadlineSet = true,
             uiAction = {}
         )
     }
