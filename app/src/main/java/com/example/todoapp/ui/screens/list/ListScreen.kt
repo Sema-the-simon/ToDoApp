@@ -89,6 +89,7 @@ fun ListScreen(
                 .padding(paddingValues)
         ) {
             TodoList(
+                listState = listState,
                 todoList = uiState.todoItems,
                 onItemClick = { todoItem -> navigateToEditItem(todoItem.id) },
                 onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem)) },
@@ -101,7 +102,7 @@ fun ListScreen(
                         )
                     )
                 },
-                listState = listState
+                navigateToNewItem = navigateToNewItem
             )
 
         }
