@@ -41,7 +41,7 @@ fun TodoListItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .background(LightBackSecondary),
         verticalAlignment = Alignment.Top
     ) {

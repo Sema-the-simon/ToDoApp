@@ -1,10 +1,13 @@
 package com.example.todoapp.ui.screens.list.components
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -23,8 +26,10 @@ fun TodoList(
     onItemClick: (TodoItem) -> Unit,
     onDelete: (TodoItem) -> Unit,
     onUpdate: (TodoItem) -> Unit,
+    listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .shadow(
@@ -38,7 +43,9 @@ fun TodoList(
                 todoItem = todo,
                 onCheckboxClick = { onUpdate(todo) },
                 onItemClick = { onItemClick(todo) },
-                Modifier.animateItemPlacement()
+                Modifier.animateItemPlacement(
+                    tween(durationMillis = 200)
+                )
             )
         }
     }

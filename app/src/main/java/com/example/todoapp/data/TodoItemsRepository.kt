@@ -3,6 +3,7 @@ package com.example.todoapp.data
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.utils.getData
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -11,6 +12,8 @@ import javax.inject.Inject
 class TodoItemsRepository @Inject constructor() : Repository {
     private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(getData())
     override val todoItems = _todoItems.asStateFlow()
+    private val _isTuskFiltered = MutableStateFlow(false)
+    override val isTuskFiltered = _isTuskFiltered.asStateFlow()
 
     override fun countDoneTodos(): Int = _todoItems.value.count { it.isDone }
 
@@ -46,4 +49,9 @@ class TodoItemsRepository @Inject constructor() : Repository {
     }
 
     override fun getTodoItem(id: String): TodoItem? = _todoItems.value.firstOrNull { it.id == id }
+    override fun changeFilterState(isFiltered: Boolean) {
+        _isTuskFiltered.update {
+            isFiltered
+        }
+    }
 }

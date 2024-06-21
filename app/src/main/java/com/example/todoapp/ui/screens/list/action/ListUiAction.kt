@@ -5,4 +5,5 @@ import com.example.todoapp.data.model.TodoItem
 sealed class ListUiAction {
     data class UpdateTodoItem(val todoItem: TodoItem): ListUiAction()
     data class RemoveTodoItem(val todoItem: TodoItem) : ListUiAction()
+    data class ChangeFilter(val isFiltered: Boolean) :ListUiAction()
 }
