@@ -28,6 +28,7 @@ class EditViewModel @Inject constructor(
         id = UUID.randomUUID().toString(),
         text = "",
         importance = Importance.BASIC,
+        isDone = false ,
         creationDate = System.currentTimeMillis()
     )
     private var isNewItem: Boolean = true
