@@ -9,4 +9,5 @@ sealed class EditUiAction {
     data class UpdateDeadlineSet(val isDeadlineSet: Boolean): EditUiAction()
     data class UpdateDeadline(val deadline: Long) : EditUiAction()
     data class UpdateImportance(val importance: Importance) : EditUiAction()
+    data class UpdateDialogVisibility(val isDialogVisible: Boolean) : EditUiAction()
 }

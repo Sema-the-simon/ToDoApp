@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface Repository {
     val todoItems: StateFlow<List<TodoItem>>
     val isTuskFiltered: StateFlow<Boolean>
+
     fun countDoneTodos(): Int
     fun addTodoItem(todoItem: TodoItem)
     fun updateItem(todoItem: TodoItem)

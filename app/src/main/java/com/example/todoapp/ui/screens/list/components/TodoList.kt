@@ -1,7 +1,6 @@
 package com.example.todoapp.ui.screens.list.components
 
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,14 +26,12 @@ import com.example.todoapp.ui.themes.LightBackSecondary
 import com.example.todoapp.ui.themes.LightLabelTertiary
 import com.example.todoapp.utils.getData
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TodoList(
     todoList: List<TodoItem>,
-    onItemClick: (TodoItem) -> Unit,
+    onItemClick: (String) -> Unit,
     onDelete: (TodoItem) -> Unit,
     onUpdate: (TodoItem) -> Unit,
-    navigateToNewItem: () -> Unit,
     listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
@@ -48,22 +45,26 @@ fun TodoList(
             .background(LightBackSecondary),
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        items(todoList, key = { it.id }) { todo ->
-            TodoListItem(
-                todoItem = todo,
-                onCheckboxClick = { onUpdate(todo) },
-                onItemClick = { onItemClick(todo) },
-                Modifier.animateItemPlacement(
-                    tween(durationMillis = 200)
+        items(todoList, key = { it.id }) { todoItem ->
+            SwipedTodoListItem(
+                todoItem = todoItem,
+                onCheckboxClick = { onUpdate(todoItem) },
+                onItemClick = { onItemClick(todoItem.id) },
+                onDeleteSwipe = { onDelete(todoItem) },
+                onUpdateSwipe = { onUpdate(todoItem) },
+                Modifier.animateItem(
+                    placementSpec = tween(durationMillis = 150)
                 )
             )
         }
         item {
             TextButton(
                 onClick = {
-                    navigateToNewItem()
+                    onItemClick("")
                 },
-                modifier = Modifier
+                modifier = Modifier.animateItem(
+                    placementSpec = tween(durationMillis = 200)
+                )
             ) {
                 Text(
                     text = stringResource(R.string.add_new_task_text_field),
@@ -90,8 +91,7 @@ fun PreviewToDoItemList() {
             todoList = getData().filter { it.id < 5.toString() },
             onItemClick = {},
             onDelete = {},
-            onUpdate = {},
-            navigateToNewItem = {}
+            onUpdate = {}
         )
     }
 

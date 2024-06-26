@@ -3,11 +3,11 @@ package com.example.todoapp.ui.screens.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.example.todoapp.data.Repository
-import com.example.todoapp.data.TodoItemsRepository
 import com.example.todoapp.data.model.Importance
 import com.example.todoapp.data.model.TodoItem
-import com.example.todoapp.ui.navigation.Edit
+import com.example.todoapp.ui.navigation.Destination
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +37,12 @@ class EditViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        getTodoItemFromRepository()
+    }
+
+    private fun getTodoItemFromRepository() {
         viewModelScope.launch {
-            val id = savedStateHandle.get<String>(Edit.ID) ?: ""
+            val id = savedStateHandle.toRoute<Destination.Edit>().id
             repository.getTodoItem(id)?.let { item ->
                 todoItem = item
                 isNewItem = false
@@ -76,6 +80,10 @@ class EditViewModel @Inject constructor(
             is EditUiAction.UpdateDeadline -> _uiState.update {
                 uiState.value.copy(deadline = action.deadline)
             }
+
+            is EditUiAction.UpdateDialogVisibility -> _uiState.update {
+                uiState.value.copy(isDialogVisible = action.isDialogVisible)
+            }
         }
     }
 
@@ -112,5 +120,6 @@ data class EditUiState(
     val importance: Importance = Importance.BASIC,
     val deadline: Long = System.currentTimeMillis(),
     val isDeadlineSet: Boolean = false,
-    val isNewItem: Boolean = true
+    val isNewItem: Boolean = true,
+    val isDialogVisible: Boolean = false
 )

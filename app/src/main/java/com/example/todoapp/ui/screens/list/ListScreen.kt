@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.screens.list
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,7 +38,6 @@ import kotlinx.coroutines.launch
 fun ListScreen(
     uiState: ListUiState,
     onUiAction: (ListUiAction) -> Unit,
-    navigateToNewItem: () -> Unit,
     navigateToEditItem: (String) -> Unit
 ) {
     val scrollBehavior =
@@ -72,7 +70,7 @@ fun ListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigateToNewItem() },
+                onClick = { navigateToEditItem("") },
                 shape = CircleShape,
                 containerColor = Blue,
                 contentColor = White
@@ -91,20 +89,10 @@ fun ListScreen(
             TodoList(
                 listState = listState,
                 todoList = uiState.todoItems,
-                onItemClick = { todoItem -> navigateToEditItem(todoItem.id) },
-                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem)) },
-                onUpdate = { todoItem ->
-                    onUiAction(
-                        ListUiAction.UpdateTodoItem(
-                            todoItem.copy(
-                                isDone = !todoItem.isDone
-                            )
-                        )
-                    )
-                },
-                navigateToNewItem = navigateToNewItem
+                onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
+                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
+                onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) }
             )
-
         }
     }
 
@@ -114,5 +102,5 @@ fun ListScreen(
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun PreviewListScreen() {
-    ListScreen(ListUiState(getData(), 1), {}, {}, {})
+    ListScreen(ListUiState(getData(), 1), {}, {})
 }
