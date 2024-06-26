@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -55,6 +57,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     //compose
     implementation(platform(libs.androidx.compose.bom))
@@ -66,9 +69,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.activity.compose)
     //hilt
-    implementation(libs.hilt.android.v248)
-    kapt(libs.hilt.android.compiler.v248)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
     implementation( libs.androidx.hilt.navigation.compose)
+    //serializable
+    implementation(libs.kotlinx.serialization.json)
+
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

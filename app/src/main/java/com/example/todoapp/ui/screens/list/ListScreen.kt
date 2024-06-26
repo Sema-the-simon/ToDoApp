@@ -39,7 +39,6 @@ import kotlinx.coroutines.launch
 fun ListScreen(
     uiState: ListUiState,
     onUiAction: (ListUiAction) -> Unit,
-    navigateToNewItem: () -> Unit,
     navigateToEditItem: (String) -> Unit
 ) {
     val scrollBehavior =
@@ -72,7 +71,7 @@ fun ListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigateToNewItem() },
+                onClick = { navigateToEditItem("") },
                 shape = CircleShape,
                 containerColor = Blue,
                 contentColor = White
@@ -91,7 +90,7 @@ fun ListScreen(
             TodoList(
                 listState = listState,
                 todoList = uiState.todoItems,
-                onItemClick = { todoItem -> navigateToEditItem(todoItem.id) },
+                onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
                 onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem)) },
                 onUpdate = { todoItem ->
                     onUiAction(
@@ -101,10 +100,8 @@ fun ListScreen(
                             )
                         )
                     )
-                },
-                navigateToNewItem = navigateToNewItem
+                }
             )
-
         }
     }
 
@@ -114,5 +111,5 @@ fun ListScreen(
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 fun PreviewListScreen() {
-    ListScreen(ListUiState(getData(), 1), {}, {}, {})
+    ListScreen(ListUiState(getData(), 1), {}, {})
 }

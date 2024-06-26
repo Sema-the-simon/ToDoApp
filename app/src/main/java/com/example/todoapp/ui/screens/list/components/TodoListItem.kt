@@ -68,8 +68,8 @@ fun TodoListItem(
         )
         Row(
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 12.dp)
                 .clickable { onItemClick() }
+                .padding(vertical = 12.dp)
 
         ) {
             Column(

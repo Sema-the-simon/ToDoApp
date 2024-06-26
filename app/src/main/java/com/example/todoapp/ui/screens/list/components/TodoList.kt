@@ -1,7 +1,6 @@
 package com.example.todoapp.ui.screens.list.components
 
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,14 +26,12 @@ import com.example.todoapp.ui.themes.LightBackSecondary
 import com.example.todoapp.ui.themes.LightLabelTertiary
 import com.example.todoapp.utils.getData
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TodoList(
     todoList: List<TodoItem>,
-    onItemClick: (TodoItem) -> Unit,
+    onItemClick: (String) -> Unit,
     onDelete: (TodoItem) -> Unit,
     onUpdate: (TodoItem) -> Unit,
-    navigateToNewItem: () -> Unit,
     listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
@@ -52,16 +49,16 @@ fun TodoList(
             TodoListItem(
                 todoItem = todo,
                 onCheckboxClick = { onUpdate(todo) },
-                onItemClick = { onItemClick(todo) },
-                Modifier.animateItemPlacement(
-                    tween(durationMillis = 200)
+                onItemClick = { onItemClick(todo.id) },
+                Modifier.animateItem(
+                    placementSpec = tween(durationMillis = 200)
                 )
             )
         }
         item {
             TextButton(
                 onClick = {
-                    navigateToNewItem()
+                    onItemClick("")
                 },
                 modifier = Modifier
             ) {
@@ -90,8 +87,7 @@ fun PreviewToDoItemList() {
             todoList = getData().filter { it.id < 5.toString() },
             onItemClick = {},
             onDelete = {},
-            onUpdate = {},
-            navigateToNewItem = {}
+            onUpdate = {}
         )
     }
 
