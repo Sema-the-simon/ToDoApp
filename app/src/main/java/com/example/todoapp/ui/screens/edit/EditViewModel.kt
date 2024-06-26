@@ -37,6 +37,10 @@ class EditViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        getTodoItemFromRepository()
+    }
+
+    private fun getTodoItemFromRepository() {
         viewModelScope.launch {
             val id = savedStateHandle.get<String>(Edit.ID) ?: ""
             repository.getTodoItem(id)?.let { item ->
