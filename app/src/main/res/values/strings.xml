@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">ToDoApp</string>
+    <string name="importance_low">Low</string>
+    <string name="importance_normal">Basic</string>
+    <string name="importance_urgent">!! Important</string>
+    <string name="todolist_title">Мy Tasks</string>
+    <string name="list_title_tasks_count">Done - %1$d</string>
+    <string name="edit_close_button">Close edit screen button</string>
+    <string name="edit_save_button">Save</string>
+    <string name="edit_text_field_hint">What needs to be done…</string>
+    <string name="importance_title">Importance</string>
+    <string name="deadline_title">Deadline</string>
+    <string name="deadline_calendar_ok">OK</string>
+    <string name="deadline_calendar_cancel">Cancel</string>
+    <string name="delete_title">Delete</string>
+    <string name="add_new_task_text_field">New</string>
 </resources>

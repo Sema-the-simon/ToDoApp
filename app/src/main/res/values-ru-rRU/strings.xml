@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="importance_low">Низкая</string>
+    <string name="importance_normal">Обычная</string>
+    <string name="importance_urgent">!! Высокая</string>
+    <string name="todolist_title">Мои дела</string>
+    <string name="list_title_tasks_count">Выполнено - %1$d</string>
+    <string name="edit_close_button">Кнопка закрытия экрана редактирования</string>
+    <string name="edit_save_button">Сохранить</string>
+    <string name="edit_text_field_hint">Что надо сделать…</string>
+    <string name="importance_title">Важность</string>
+    <string name="deadline_title">Дедлайн</string>
+    <string name="deadline_calendar_ok">ОК</string>
+    <string name="deadline_calendar_cancel">Отмена</string>
+    <string name="delete_title">Удалить</string>
+    <string name="add_new_task_text_field">Новое</string>
+</resources>
