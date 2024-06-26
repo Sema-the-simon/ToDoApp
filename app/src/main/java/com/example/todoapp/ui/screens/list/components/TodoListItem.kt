@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.data.model.Importance
 import com.example.todoapp.data.model.TodoItem
-import com.example.todoapp.ui.themes.LightBackPrimary
 import com.example.todoapp.ui.themes.LightBackSecondary
 import com.example.todoapp.ui.themes.LightLabelPrimary
 import com.example.todoapp.ui.themes.LightLabelTertiary
@@ -90,7 +89,7 @@ fun TodoListItem(
                 )
                 if (todoItem.deadline != null)
                     Text(
-                        text = formatLongToDatePattern(todoItem.deadline!!),
+                        text = formatLongToDatePattern(todoItem.deadline),
                         color = LightLabelTertiary,
                         fontSize = 14.sp
                     )
