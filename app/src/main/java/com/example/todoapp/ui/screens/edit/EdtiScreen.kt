@@ -56,6 +56,7 @@ fun EditScreen(
             EditDeadlineField(
                 deadline = uiState.deadline,
                 isDeadlineSet = uiState.isDeadlineSet,
+                isDialogOpen = uiState.isDialogVisible,
                 uiAction = onUiAction
             )
             EditDivider(padding = PaddingValues(top = 16.dp, bottom = 8.dp))

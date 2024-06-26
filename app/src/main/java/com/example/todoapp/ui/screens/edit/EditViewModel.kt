@@ -81,6 +81,10 @@ class EditViewModel @Inject constructor(
             is EditUiAction.UpdateDeadline -> _uiState.update {
                 uiState.value.copy(deadline = action.deadline)
             }
+
+            is EditUiAction.UpdateDialogVisibility -> _uiState.update {
+                uiState.value.copy(isDialogVisible = action.isDialogVisible)
+            }
         }
     }
 
@@ -117,5 +121,6 @@ data class EditUiState(
     val importance: Importance = Importance.BASIC,
     val deadline: Long = System.currentTimeMillis(),
     val isDeadlineSet: Boolean = false,
-    val isNewItem: Boolean = true
+    val isNewItem: Boolean = true,
+    val isDialogVisible: Boolean = false
 )

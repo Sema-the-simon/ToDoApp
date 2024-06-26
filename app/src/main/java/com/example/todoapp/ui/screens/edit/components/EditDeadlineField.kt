@@ -20,9 +20,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,6 +41,7 @@ import com.example.todoapp.utils.formatLongToDatePattern
 fun EditDeadlineField(
     deadline: Long,
     isDeadlineSet: Boolean,
+    isDialogOpen: Boolean,
     uiAction: (EditUiAction) -> Unit
 ) {
     Row(
@@ -53,12 +52,10 @@ fun EditDeadlineField(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val dateText = remember(deadline) { formatLongToDatePattern(deadline) }
-        var isDialogOpen by remember { mutableStateOf(false) }
-
         Column(
             if (isDeadlineSet)
                 Modifier.clickable {
-                    isDialogOpen = true
+                    uiAction(EditUiAction.UpdateDialogVisibility(true))
                 }
             else
                 Modifier
@@ -78,7 +75,7 @@ fun EditDeadlineField(
             checked = isDeadlineSet,
             onCheckedChange = { checked ->
                 if (checked) {
-                    isDialogOpen = true
+                    uiAction(EditUiAction.UpdateDialogVisibility(true))
                 } else {
                     uiAction(EditUiAction.UpdateDeadlineSet(false))
                 }
@@ -91,58 +88,57 @@ fun EditDeadlineField(
                 uncheckedBorderColor = LightSupportOverlay,
             )
         )
-        DeadlineDatePicker(
-            isDialogOpen = isDialogOpen,
-            deadline = deadline,
-            uiAction = uiAction,
-            closeDialog = { isDialogOpen = false }
-        )
+        if (isDialogOpen) {
+            DeadlineDatePicker(
+                deadline = deadline,
+                uiAction = uiAction,
+                onDialogClose = { uiAction(EditUiAction.UpdateDialogVisibility(false)) }
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DeadlineDatePicker(
-    isDialogOpen: Boolean,
     deadline: Long,
     uiAction: (EditUiAction) -> Unit,
-    closeDialog: () -> Unit
+    onDialogClose: () -> Unit
 ) {
-    if (isDialogOpen) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = deadline
-        )
-        val confirmEnabled by remember(datePickerState.selectedDateMillis) {
-            derivedStateOf { datePickerState.selectedDateMillis != null }
-        }
-
-        DatePickerDialog(
-            onDismissRequest = closeDialog,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            uiAction(EditUiAction.UpdateDeadline(it))
-                            uiAction(EditUiAction.UpdateDeadlineSet(true))
-                        }
-                        closeDialog()
-                    },
-                    enabled = confirmEnabled
-                ) {
-                    Text(stringResource(R.string.deadline_calendar_ok))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = closeDialog
-                ) {
-                    Text(stringResource(R.string.deadline_calendar_cancel))
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = deadline
+    )
+    val confirmEnabled by remember(datePickerState.selectedDateMillis) {
+        derivedStateOf { datePickerState.selectedDateMillis != null }
     }
+
+    DatePickerDialog(
+        onDismissRequest = onDialogClose,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { date ->
+                        uiAction(EditUiAction.UpdateDeadline(date))
+                        uiAction(EditUiAction.UpdateDeadlineSet(true))
+                    }
+                    onDialogClose()
+                },
+                enabled = confirmEnabled
+            ) {
+                Text(stringResource(R.string.deadline_calendar_ok))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDialogClose
+            ) {
+                Text(stringResource(R.string.deadline_calendar_cancel))
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+
 }
 
 @Preview
@@ -152,6 +148,7 @@ fun PreviewDeadline() {
         EditDeadlineField(
             deadline = 1696693800000L,
             isDeadlineSet = true,
+            isDialogOpen = false,
             uiAction = {}
         )
     }
