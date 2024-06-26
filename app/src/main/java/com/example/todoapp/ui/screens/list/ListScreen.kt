@@ -90,16 +90,8 @@ fun ListScreen(
                 listState = listState,
                 todoList = uiState.todoItems,
                 onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
-                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem)) },
-                onUpdate = { todoItem ->
-                    onUiAction(
-                        ListUiAction.UpdateTodoItem(
-                            todoItem.copy(
-                                isDone = !todoItem.isDone
-                            )
-                        )
-                    )
-                }
+                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
+                onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) }
             )
         }
     }

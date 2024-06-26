@@ -32,8 +32,8 @@ class ListViewModel @Inject constructor(
 
     fun onUiAction(action: ListUiAction) {
         when (action) {
-            is ListUiAction.UpdateTodoItem -> updateTodoItem(action.todoItem)
-            is ListUiAction.RemoveTodoItem -> removeTodoItem(action.todoItem)
+            is ListUiAction.UpdateTodoItem -> updateTodoItem(action.todoItemId)
+            is ListUiAction.RemoveTodoItem -> removeTodoItem(action.todoItemId)
             is ListUiAction.ChangeFilter -> changeFilterState(action.isFiltered)
         }
     }
@@ -41,15 +41,19 @@ class ListViewModel @Inject constructor(
     private fun List<TodoItem>.withFilter(isFiltered: Boolean): List<TodoItem> =
         if (isFiltered) this.filter { !it.isDone } else this
 
-    private fun updateTodoItem(todoItem: TodoItem) {
-        viewModelScope.launch {
-            repository.updateItem(todoItem)
+    private fun updateTodoItem(todoItemId: String) {
+        uiState.value.todoItems.find { it.id == todoItemId }?.let { item ->
+            viewModelScope.launch {
+                repository.updateItem(
+                    item.copy(isDone = item.let { !it.isDone })
+                )
+            }
         }
     }
 
-    private fun removeTodoItem(todoItem: TodoItem) {
+    private fun removeTodoItem(todoItemId: String) {
         viewModelScope.launch {
-            repository.removeItem(todoItem.id)
+            repository.removeItem(todoItemId)
         }
     }
 

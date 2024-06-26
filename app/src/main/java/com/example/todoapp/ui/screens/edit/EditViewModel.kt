@@ -42,7 +42,6 @@ class EditViewModel @Inject constructor(
 
     private fun getTodoItemFromRepository() {
         viewModelScope.launch {
-            //val id = savedStateHandle.get<String>(Edit.ID) ?: ""
             val id = savedStateHandle.toRoute<Destination.Edit>().id
             repository.getTodoItem(id)?.let { item ->
                 todoItem = item

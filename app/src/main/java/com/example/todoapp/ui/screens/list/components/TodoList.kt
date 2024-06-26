@@ -45,13 +45,15 @@ fun TodoList(
             .background(LightBackSecondary),
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
-        items(todoList, key = { it.id }) { todo ->
-            TodoListItem(
-                todoItem = todo,
-                onCheckboxClick = { onUpdate(todo) },
-                onItemClick = { onItemClick(todo.id) },
+        items(todoList, key = { it.id }) { todoItem ->
+            SwipedTodoListItem(
+                todoItem = todoItem,
+                onCheckboxClick = { onUpdate(todoItem) },
+                onItemClick = { onItemClick(todoItem.id) },
+                onDeleteSwipe = { onDelete(todoItem) },
+                onUpdateSwipe = { onUpdate(todoItem) },
                 Modifier.animateItem(
-                    placementSpec = tween(durationMillis = 200)
+                    placementSpec = tween(durationMillis = 150)
                 )
             )
         }
@@ -60,7 +62,9 @@ fun TodoList(
                 onClick = {
                     onItemClick("")
                 },
-                modifier = Modifier
+                modifier = Modifier.animateItem(
+                    placementSpec = tween(durationMillis = 200)
+                )
             ) {
                 Text(
                     text = stringResource(R.string.add_new_task_text_field),
