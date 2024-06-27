@@ -1,8 +1,10 @@
 package com.example.todoapp.ui.screens.list.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.animateValueAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -18,26 +20,53 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightLabelPrimary
-import com.example.todoapp.ui.themes.LightLabelTertiary
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListTopAppBar(
     doneTasks: Int = 0,
-    scrollBehavior: TopAppBarScrollBehavior,
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        rememberTopAppBarState()
+    ),
     isFiltered: Boolean = false,
     onVisibilityClick: (Boolean) -> Unit = {}
 ) {
     val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 0.07f) true else false
+    val titleStyle: TextStyle by animateValueAsState(
+        targetValue = if (isTittleExpand)
+            ExtendedTheme.typography.largeTitle
+        else
+            ExtendedTheme.typography.title,
+        typeConverter = TwoWayConverter<TextStyle, AnimationVector2D>(
+            convertToVector = {
+                AnimationVector2D(
+                    it.fontSize.value,
+                    it.lineHeight.value
+                )
+            },
+            convertFromVector = {
+                TextStyle(
+                    fontSize = it.v1.sp,
+                    lineHeight = it.v2.sp
+                )
+            }
+        ),
+        label = "TopAppTitle"
+    )
+
     LargeTopAppBar(
         title = {
             Row(
@@ -45,7 +74,8 @@ fun ListTopAppBar(
                     .fillMaxWidth()
                     .padding(
                         start = animateDpAsState(
-                            targetValue = if (isTittleExpand) 44.dp else 0.dp
+                            targetValue = if (isTittleExpand) 44.dp else 0.dp,
+                            label = "padding animation"
                         ).value
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,11 +87,8 @@ fun ListTopAppBar(
                 ) {
                     Text(
                         text = stringResource(R.string.todolist_title),
-                        color = LightLabelPrimary,
-                        fontSize = (animateIntAsState(
-                            targetValue = if (isTittleExpand) 32 else 20,
-                            label = "TopAppTitle"
-                        )).value.sp
+                        color = ExtendedTheme.colors.labelPrimary,
+                        style = titleStyle
                     )
                     AnimatedVisibility(
                         visible = isTittleExpand,
@@ -73,10 +100,9 @@ fun ListTopAppBar(
                                 R.string.list_title_tasks_count,
                                 doneTasks
                             ),
-                            color = LightLabelTertiary,
-                            fontSize = 14.sp,
-                            lineHeight = 24.sp,
-                            modifier = Modifier
+                            color = ExtendedTheme.colors.labelTertiary,
+                            style = ExtendedTheme.typography.body,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
                 }
@@ -91,15 +117,19 @@ fun ListTopAppBar(
         },
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = LightBackPrimary,
-            scrolledContainerColor = LightBackPrimary
+            containerColor = ExtendedTheme.colors.backPrimary,
+            scrolledContainerColor = ExtendedTheme.colors.backPrimary
         )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
 @Composable
-fun PreviewListScreen() {
-    ListTopAppBar(0, TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState()))
+fun PreviewListScreen(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
+        ListTopAppBar(0)
+    }
 }

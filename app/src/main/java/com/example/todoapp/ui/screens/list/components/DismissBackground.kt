@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.GrayLight
 import com.example.todoapp.ui.themes.Green
 import com.example.todoapp.ui.themes.Red
@@ -33,7 +34,7 @@ fun DismissBackground(
     val color = when (direction) {
         SwipeToDismissBoxValue.EndToStart -> Red
         SwipeToDismissBoxValue.StartToEnd -> if (isTaskDone) GrayLight else Green
-        SwipeToDismissBoxValue.Settled -> Green
+        SwipeToDismissBoxValue.Settled -> ExtendedTheme.colors.backPrimary
     }
 
     Row(

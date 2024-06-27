@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.data.model.TodoItem
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightBackSecondary
-import com.example.todoapp.ui.themes.LightLabelTertiary
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.utils.getData
 
 @Composable
@@ -42,7 +42,7 @@ fun TodoList(
                 elevation = 2.dp,
                 shape = RoundedCornerShape(12.dp),
             )
-            .background(LightBackSecondary),
+            .background(ExtendedTheme.colors.backSecondary),
         contentPadding = PaddingValues(vertical = 8.dp),
     ) {
         items(todoList, key = { it.id }) { todoItem ->
@@ -68,7 +68,8 @@ fun TodoList(
             ) {
                 Text(
                     text = stringResource(R.string.add_new_task_text_field),
-                    color = LightLabelTertiary,
+                    color = ExtendedTheme.colors.labelTertiary,
+                    style = ExtendedTheme.typography.body,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 42.dp, top = 8.dp, bottom = 8.dp)
@@ -81,18 +82,18 @@ fun TodoList(
 }
 
 
-@Preview(widthDp = 360, heightDp = 720)
+@Preview(widthDp = 360, heightDp = 720, locale = "ru")
 @Composable
-fun PreviewToDoItemList() {
-    Surface(
-        color = LightBackPrimary,
-    ) {
+fun PreviewToDoItemList(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
         TodoList(
-            todoList = getData().filter { it.id < 5.toString() },
+            todoList = getData().filter { it.id < 4.toString() },
             onItemClick = {},
             onDelete = {},
             onUpdate = {}
         )
-    }
 
+    }
 }

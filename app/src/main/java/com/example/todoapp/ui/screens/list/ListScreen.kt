@@ -24,11 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.ui.screens.list.action.ListUiAction
 import com.example.todoapp.ui.screens.list.components.ListTopAppBar
 import com.example.todoapp.ui.screens.list.components.TodoList
 import com.example.todoapp.ui.themes.Blue
-import com.example.todoapp.ui.themes.LightBackPrimary
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.ui.themes.White
 import com.example.todoapp.utils.getData
 import kotlinx.coroutines.launch
@@ -78,7 +81,7 @@ fun ListScreen(
                 Icon(Icons.Rounded.Add, contentDescription = null)
             }
         },
-        containerColor = LightBackPrimary,
+        containerColor = ExtendedTheme.colors.backPrimary,
     ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,8 +102,12 @@ fun ListScreen(
 
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
 @Composable
-fun PreviewListScreen() {
-    ListScreen(ListUiState(getData(), 1), {}, {})
+fun PreviewListScreen(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
+        ListScreen(ListUiState(getData(), 1), {}, {})
+    }
 }
