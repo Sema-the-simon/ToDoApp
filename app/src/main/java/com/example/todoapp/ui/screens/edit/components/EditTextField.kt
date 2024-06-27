@@ -18,9 +18,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
-import com.example.todoapp.ui.themes.LightBackSecondary
-import com.example.todoapp.ui.themes.LightLabelPrimary
-import com.example.todoapp.ui.themes.LightLabelTertiary
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
+
 
 @Composable
 fun EditTextField(
@@ -34,15 +35,15 @@ fun EditTextField(
             .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = 15.dp)
             .background(
-                color = LightBackSecondary,
+                color = ExtendedTheme.colors.backSecondary,
                 shape = RoundedCornerShape(10.dp)
             )
             .clip(RoundedCornerShape(10.dp)),
         textStyle = MaterialTheme.typography.bodyLarge.copy(
-            color = LightLabelPrimary
+            color = ExtendedTheme.colors.labelPrimary
         ),
         minLines = 3,
-        cursorBrush = SolidColor(LightLabelPrimary)
+        cursorBrush = SolidColor(ExtendedTheme.colors.labelPrimary)
     ) { textField ->
         Box(
             modifier = Modifier
@@ -51,7 +52,7 @@ fun EditTextField(
             if (text.isEmpty())
                 Text(
                     text = stringResource(id = R.string.edit_text_field_hint),
-                    color = LightLabelTertiary
+                    color = ExtendedTheme.colors.labelTertiary
                 )
             textField.invoke()
         }
@@ -61,9 +62,13 @@ fun EditTextField(
 
 @Preview
 @Composable
-fun PreviewTextField() {
-    EditTextField(
-        text = "",
-        uiAction = {}
-    )
+fun PreviewTextField(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
+        EditTextField(
+            text = "",
+            uiAction = {}
+        )
+    }
 }

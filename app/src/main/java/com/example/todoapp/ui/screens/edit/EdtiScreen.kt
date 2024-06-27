@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.screens.edit.components.EditDeadlineField
@@ -18,7 +19,9 @@ import com.example.todoapp.ui.screens.edit.components.EditDivider
 import com.example.todoapp.ui.screens.edit.components.EditImportanceField
 import com.example.todoapp.ui.screens.edit.components.EditTextField
 import com.example.todoapp.ui.screens.edit.components.EditTopAppBar
-import com.example.todoapp.ui.themes.LightBackPrimary
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 
 @Composable
 fun EditScreen(
@@ -29,12 +32,12 @@ fun EditScreen(
     Scaffold(
         topBar = {
             EditTopAppBar(
-                text = uiState.text,
+                isButtonEnable = uiState.text.isNotBlank(),
                 uiAction = onUiAction,
                 navigateUp = navigateUp
             )
         },
-        containerColor = LightBackPrimary
+        containerColor = ExtendedTheme.colors.backPrimary
     ) { paddingValues ->
         val scrollState = rememberScrollState()
 
@@ -71,14 +74,20 @@ fun EditScreen(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
 @Composable
-fun PreviewListScreen() {
-    EditScreen(
-        EditUiState(
-            ""
-        ),
-        {},
-        {}
-    )
+fun PreviewListScreen(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
+        EditScreen(
+            EditUiState(
+                "Lorem ipsum dolor sit amet, consectetur ",
+                isDeadlineSet = true,
+                deadline = System.currentTimeMillis()
+            ),
+            {},
+            {}
+        )
+    }
 }
