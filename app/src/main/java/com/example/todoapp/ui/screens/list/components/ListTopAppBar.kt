@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,7 +45,7 @@ fun ListTopAppBar(
     isFiltered: Boolean = false,
     onVisibilityClick: (Boolean) -> Unit = {}
 ) {
-    val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 0.07f) true else false
+    val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 1f) true else false
     val titleStyle: TextStyle by animateValueAsState(
         targetValue = if (isTittleExpand)
             ExtendedTheme.typography.largeTitle
@@ -66,6 +67,15 @@ fun ListTopAppBar(
         ),
         label = "TopAppTitle"
     )
+    val isShadowNeed = scrollBehavior.state.contentOffset < 0
+    val elevation = animateDpAsState(
+        targetValue = if (isShadowNeed) {
+            20.dp
+        } else {
+            0.dp
+        },
+        label = "elevation"
+    )
 
     LargeTopAppBar(
         title = {
@@ -76,7 +86,7 @@ fun ListTopAppBar(
                         start = animateDpAsState(
                             targetValue = if (isTittleExpand) 44.dp else 0.dp,
                             label = "padding animation"
-                        ).value
+                        ).value,
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
@@ -119,7 +129,11 @@ fun ListTopAppBar(
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = ExtendedTheme.colors.backPrimary,
             scrolledContainerColor = ExtendedTheme.colors.backPrimary
-        )
+        ),
+        modifier = Modifier.graphicsLayer {
+            this.shadowElevation = elevation.value.toPx()
+        }
+
     )
 }
 
