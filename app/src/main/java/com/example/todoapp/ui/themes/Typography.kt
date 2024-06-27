@@ -1,13 +1,12 @@
 package com.example.todoapp.ui.themes
 
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+
 @Immutable
 data class ExtendedTypography(
     val largeTitle: TextStyle = TextStyle(),
