@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
+import com.example.todoapp.ui.screens.edit.action.EditUiEvent
 import com.example.todoapp.ui.screens.edit.components.EditDeadlineField
 import com.example.todoapp.ui.screens.edit.components.EditDeleteButton
 import com.example.todoapp.ui.screens.edit.components.EditDivider
@@ -22,14 +27,32 @@ import com.example.todoapp.ui.screens.edit.components.EditTopAppBar
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditScreen(
     uiState: EditUiState,
+    uiEvent: EditUiEvent?,
     onUiAction: (EditUiAction) -> Unit,
     navigateUp: () -> Unit
 ) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiEvent) {
+        when (uiEvent) {
+            is EditUiEvent.ShowSnackbar -> launch {
+                snackbarHostState.showSnackbar(uiEvent.message)
+            }
+
+            null -> Unit
+        }
+    }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             EditTopAppBar(
                 isButtonEnable = uiState.text.isNotBlank(),
@@ -86,6 +109,7 @@ fun PreviewListScreen(
                 isDeadlineSet = true,
                 deadline = System.currentTimeMillis()
             ),
+            null,
             {},
             {}
         )

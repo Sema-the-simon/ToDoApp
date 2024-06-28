@@ -9,7 +9,7 @@ import com.example.todoapp.ui.screens.list.ListScreen
 import com.example.todoapp.ui.screens.list.ListViewModel
 
 fun NavGraphBuilder.listDestinations(
-    onNavigateToItem: (todoItemId: String) -> Unit
+    onNavigateToItem: (todoItemId: String?) -> Unit
 ) {
     composable<Destination.List> {
         val listViewModel: ListViewModel = hiltViewModel()

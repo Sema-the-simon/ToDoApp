@@ -26,9 +26,6 @@ class MainActivity : AppCompatActivity() {
                     AppNavHost(navController)
                 }
             }
-
-
-
         }
     }
 }

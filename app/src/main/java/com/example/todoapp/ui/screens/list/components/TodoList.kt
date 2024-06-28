@@ -29,7 +29,7 @@ import com.example.todoapp.utils.getData
 @Composable
 fun TodoList(
     todoList: List<TodoItem>,
-    onItemClick: (String) -> Unit,
+    onItemClick: (String?) -> Unit,
     onDelete: (TodoItem) -> Unit,
     onUpdate: (TodoItem) -> Unit,
     listState: LazyListState = rememberLazyListState()
@@ -60,7 +60,7 @@ fun TodoList(
         item {
             TextButton(
                 onClick = {
-                    onItemClick("")
+                    onItemClick(null)
                 },
                 modifier = Modifier.animateItem(
                     placementSpec = tween(durationMillis = 200)

@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 fun ListScreen(
     uiState: ListUiState,
     onUiAction: (ListUiAction) -> Unit,
-    navigateToEditItem: (String) -> Unit
+    navigateToEditItem: (String?) -> Unit
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -73,7 +73,7 @@ fun ListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigateToEditItem("") },
+                onClick = { navigateToEditItem(null) },
                 shape = CircleShape,
                 containerColor = Blue,
                 contentColor = White
