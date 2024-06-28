@@ -7,7 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.todoapp.ui.screens.edit.EditScreen
 import com.example.todoapp.ui.screens.edit.EditViewModel
-import com.example.todoapp.ui.screens.edit.action.EditUiEvent
 
 fun NavGraphBuilder.editDestinations(
     onNavigateUp: () -> Unit
