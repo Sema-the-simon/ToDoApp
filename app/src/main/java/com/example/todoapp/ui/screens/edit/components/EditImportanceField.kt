@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +23,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.data.model.Importance
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightLabelPrimary
-import com.example.todoapp.ui.themes.LightLabelTertiary
+import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Red
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 
 
 @Composable
@@ -43,6 +43,7 @@ fun EditImportanceField(
     var expanded by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
+            .background(ExtendedTheme.colors.backPrimary)
             .padding(horizontal = 15.dp)
             .padding(top = 20.dp, bottom = 15.dp)
             .clip(RoundedCornerShape(5.dp))
@@ -50,12 +51,12 @@ fun EditImportanceField(
     ) {
         Text(
             text = stringResource(id = R.string.importance_title),
-            color = LightLabelPrimary
+            color = ExtendedTheme.colors.labelPrimary
         )
         Text(
             text = stringResource(id = importance.toStringResource()),
             modifier = Modifier.padding(top = 5.dp),
-            color = if (isImportant) Red else LightLabelTertiary
+            color = if (isImportant) Red else ExtendedTheme.colors.labelTertiary
         )
         ImportanceDropDownMenu(
             oldImportance = importance,
@@ -68,7 +69,6 @@ fun EditImportanceField(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportanceDropDownMenu(
     oldImportance: Importance,
@@ -104,7 +104,7 @@ fun ImportanceItem(
     }
     val color = when {
         importance == Importance.IMPORTANT -> Red
-        else -> LightLabelPrimary
+        else -> ExtendedTheme.colors.labelPrimary
     }
     val alpha = when {
         selected -> 1f
@@ -134,8 +134,10 @@ fun ImportanceItem(
 
 @Preview
 @Composable
-fun PreviewImportance() {
-    Box(modifier = Modifier.background(LightBackPrimary)) {
+fun PreviewImportance(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
         EditImportanceField(
             importance = Importance.BASIC,
             uiAction = {}

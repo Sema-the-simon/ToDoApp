@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
@@ -31,11 +32,9 @@ import com.example.todoapp.data.model.Importance.BASIC
 import com.example.todoapp.data.model.Importance.IMPORTANT
 import com.example.todoapp.data.model.Importance.LOW
 import com.example.todoapp.data.model.TodoItem
-import com.example.todoapp.ui.themes.LightBackSecondary
-import com.example.todoapp.ui.themes.LightLabelPrimary
-import com.example.todoapp.ui.themes.LightLabelSecondary
-import com.example.todoapp.ui.themes.LightLabelTertiary
-import com.example.todoapp.ui.themes.LightSupportSeparator
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.utils.formatLongToDatePattern
 
 @Composable
@@ -47,7 +46,7 @@ fun TodoListItem(
 ) {
     Row(
         modifier = modifier
-            .background(LightBackSecondary),
+            .background(ExtendedTheme.colors.backSecondary),
         verticalAlignment = Alignment.Top
     ) {
         Checkbox(
@@ -55,7 +54,7 @@ fun TodoListItem(
             onCheckedChange = { onCheckboxClick() },
             colors = CheckboxDefaults.colors(
                 uncheckedColor = if (todoItem.importance == IMPORTANT) Color.Red
-                else LightSupportSeparator,
+                else ExtendedTheme.colors.supportSeparator,
                 checkedColor = Color.Green
             ),
             modifier = if (todoItem.importance == IMPORTANT)
@@ -92,11 +91,11 @@ fun TodoListItem(
                     }
                     Text(
                         text = todoItem.text,
-                        color = if (todoItem.isDone) LightLabelTertiary
-                        else LightLabelPrimary,
+                        color = if (todoItem.isDone) ExtendedTheme.colors.labelTertiary
+                        else ExtendedTheme.colors.labelPrimary,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
+                        style = ExtendedTheme.typography.body.copy(
                             textDecoration = if (todoItem.isDone) TextDecoration.LineThrough
                             else TextDecoration.None
                         )
@@ -105,15 +104,15 @@ fun TodoListItem(
                 if (todoItem.deadline != null)
                     Text(
                         text = formatLongToDatePattern(todoItem.deadline),
-                        color = LightLabelTertiary,
-                        fontSize = 14.sp
+                        color = ExtendedTheme.colors.labelTertiary,
+                        style = ExtendedTheme.typography.subhead
                     )
             }
 
             Icon(
                 imageVector = Icons.Outlined.Info,
                 contentDescription = "Todo info",
-                tint = LightSupportSeparator,
+                tint = ExtendedTheme.colors.supportSeparator,
                 modifier = Modifier.padding(end = 12.dp)
             )
         }
@@ -127,7 +126,7 @@ fun ImportanceSymbol(importance: Importance) {
             Icon(
                 painter = painterResource(id = R.drawable.low_priority_arrow),
                 contentDescription = null,
-                tint = LightLabelSecondary,
+                tint = ExtendedTheme.colors.labelSecondary,
                 modifier = Modifier.padding(horizontal = 2.dp)
             )
         }
@@ -147,59 +146,61 @@ fun ImportanceSymbol(importance: Importance) {
 
 @Preview(widthDp = 360, heightDp = 720)
 @Composable
-private fun TodoItemPreview() {
+private fun TodoItemPreview(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
     val date = Calendar.getInstance()
-    Column {
-        TodoListItem(
-            todoItem = TodoItem(
-                id = "0",
-                isDone = false,
-                text = "Купить что-то, где-то, зачем-то, но зачем не очень понятно, " +
-                        "но точно нужно чтобы показать как обрезается " +
-                        "эта часть текста не видна",
-                importance = BASIC,
-                creationDate = date.timeInMillis
-            ),
-            onCheckboxClick = {},
-            onItemClick = {},
-        )
-        date.add(Calendar.DAY_OF_WEEK, 2)
-        TodoListItem(
-            todoItem = TodoItem(
-                id = "1",
-                isDone = false,
-                text = "Купить что-то",
-                importance = IMPORTANT,
-                creationDate = Calendar.getInstance().timeInMillis,
-                deadline = date.timeInMillis
+    TodoAppTheme(isDarkTheme) {
+        Column {
+            TodoListItem(
+                todoItem = TodoItem(
+                    id = "0",
+                    isDone = false,
+                    text = "Купить что-то, где-то, зачем-то, но зачем не очень понятно, " +
+                            "но точно нужно чтобы показать как обрезается " +
+                            "эта часть текста не видна",
+                    importance = BASIC,
+                    creationDate = date.timeInMillis
+                ),
+                onCheckboxClick = {},
+                onItemClick = {},
+            )
+            date.add(Calendar.DAY_OF_WEEK, 2)
+            TodoListItem(
+                todoItem = TodoItem(
+                    id = "1",
+                    isDone = false,
+                    text = "Купить что-то",
+                    importance = IMPORTANT,
+                    creationDate = Calendar.getInstance().timeInMillis,
+                    deadline = date.timeInMillis
 
-            ),
-            onCheckboxClick = {},
-            onItemClick = {},
-        )
-        TodoListItem(
-            todoItem = TodoItem(
-                id = "2",
-                isDone = false,
-                text = "Купить что-то",
-                importance = LOW,
-                creationDate = Calendar.getInstance().timeInMillis,
-            ),
-            onCheckboxClick = {},
-            onItemClick = {},
-        )
-        TodoListItem(
-            todoItem = TodoItem(
-                id = "2",
-                isDone = true,
-                text = "Купить что-то",
-                importance = IMPORTANT,
-                creationDate = Calendar.getInstance().timeInMillis,
-            ),
-            onCheckboxClick = {},
-            onItemClick = {},
-        )
+                ),
+                onCheckboxClick = {},
+                onItemClick = {},
+            )
+            TodoListItem(
+                todoItem = TodoItem(
+                    id = "2",
+                    isDone = false,
+                    text = "Купить что-то",
+                    importance = LOW,
+                    creationDate = Calendar.getInstance().timeInMillis,
+                ),
+                onCheckboxClick = {},
+                onItemClick = {},
+            )
+            TodoListItem(
+                todoItem = TodoItem(
+                    id = "2",
+                    isDone = true,
+                    text = "Купить что-то",
+                    importance = IMPORTANT,
+                    creationDate = Calendar.getInstance().timeInMillis,
+                ),
+                onCheckboxClick = {},
+                onItemClick = {},
+            )
+        }
     }
-
-
 }

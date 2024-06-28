@@ -1,17 +1,12 @@
 package com.example.todoapp.ui.screens.edit.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightSupportSeparator
+import com.example.todoapp.ui.themes.ExtendedTheme
 
 @Composable
 fun EditDivider(
@@ -21,14 +16,6 @@ fun EditDivider(
         modifier = Modifier
             .fillMaxWidth()
             .padding(padding),
-        color = LightSupportSeparator
+        color = ExtendedTheme.colors.supportSeparator
     )
-}
-
-@Preview
-@Composable
-fun PreviewEditDivider() {
-    Box(Modifier.background(LightBackPrimary)) {
-        EditDivider(padding = PaddingValues(all = 15.dp))
-    }
 }

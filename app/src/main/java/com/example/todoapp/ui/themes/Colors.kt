@@ -1,5 +1,7 @@
 package com.example.todoapp.ui.themes
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 val Red = Color(0xFFFF3B30)
@@ -29,3 +31,44 @@ val DarkLabelDisable = Color(0x26FFFFFF)
 val DarkBackPrimary = Color(0xFF161618)
 val DarkBackSecondary = Color(0xFF252528)
 val DarkBackElevated = Color(0xFF3C3C3F)
+
+@Immutable
+data class ExtendedColors(
+    val supportSeparator: Color = Color.Unspecified,
+    val supportOverlay: Color = Color.Unspecified,
+    val labelPrimary: Color = Color.Unspecified,
+    val labelSecondary: Color = Color.Unspecified,
+    val labelTertiary: Color = Color.Unspecified,
+    val labelDisable: Color = Color.Unspecified,
+    val backPrimary: Color = Color.Unspecified,
+    val backSecondary: Color = Color.Unspecified,
+    val backElevated: Color = Color.Unspecified
+)
+
+val lightExtendedColors = ExtendedColors(
+    supportSeparator = LightSupportSeparator,
+    supportOverlay = LightSupportOverlay,
+    labelPrimary = LightLabelPrimary,
+    labelSecondary = LightLabelSecondary,
+    labelTertiary = LightLabelTertiary,
+    labelDisable = LightLabelDisable,
+    backPrimary = LightBackPrimary,
+    backSecondary = LightBackSecondary,
+    backElevated = LightBackElevated
+)
+
+val darkExtendedColors = ExtendedColors(
+    supportSeparator = DarkSupportSeparator,
+    supportOverlay = DarkSupportOverlay,
+    labelPrimary = DarkLabelPrimary,
+    labelSecondary = DarkLabelSecondary,
+    labelTertiary = DarkLabelTertiary,
+    labelDisable = DarkLabelDisable,
+    backPrimary = DarkBackPrimary,
+    backSecondary = DarkBackSecondary,
+    backElevated = DarkBackElevated
+)
+
+val LocalExtendedColors = staticCompositionLocalOf {
+    ExtendedColors()
+}

@@ -3,7 +3,14 @@ package com.example.todoapp.utils
 import android.icu.util.Calendar
 import com.example.todoapp.data.model.Importance
 import com.example.todoapp.data.model.TodoItem
+import java.io.IOException
 import kotlin.random.Random
+
+fun fakeNetworkOrDatabaseCall(id: String): TodoItem? {
+    if ((1..10).random() == 5)
+        throw IOException("Cant find item")
+    return getData().random().copy(id = id)
+}
 
 fun getData(): MutableList<TodoItem> {
     val data = mutableListOf<TodoItem>()
@@ -19,7 +26,8 @@ fun getData(): MutableList<TodoItem> {
             text = texts[0],
             importance = Importance.BASIC,
             isDone = true,
-            creationDate = Calendar.getInstance().also { it.set(Calendar.DAY_OF_WEEK, -1) }.timeInMillis
+            creationDate = Calendar.getInstance()
+                .also { it.set(Calendar.DAY_OF_WEEK, -1) }.timeInMillis
         )
     )
 
@@ -28,8 +36,9 @@ fun getData(): MutableList<TodoItem> {
             id = 1.toString(),
             text = texts[0],
             importance = Importance.BASIC,
-            isDone = false ,
-            creationDate = Calendar.getInstance().also { it.set(Calendar.DAY_OF_WEEK, -2) }.timeInMillis
+            isDone = false,
+            creationDate = Calendar.getInstance()
+                .also { it.set(Calendar.DAY_OF_WEEK, -2) }.timeInMillis
         )
     )
 
@@ -38,8 +47,9 @@ fun getData(): MutableList<TodoItem> {
             id = 2.toString(),
             text = texts[1],
             importance = Importance.BASIC,
-            isDone = false ,
-            creationDate = Calendar.getInstance().also { it.set(Calendar.DAY_OF_WEEK, -3) }.timeInMillis
+            isDone = false,
+            creationDate = Calendar.getInstance()
+                .also { it.set(Calendar.DAY_OF_WEEK, -3) }.timeInMillis
         )
     )
 
@@ -48,8 +58,9 @@ fun getData(): MutableList<TodoItem> {
             id = 3.toString(),
             text = texts[2],
             importance = Importance.BASIC,
-            isDone = false ,
-            creationDate = Calendar.getInstance().also { it.set(Calendar.DAY_OF_WEEK, -4) }.timeInMillis
+            isDone = false,
+            creationDate = Calendar.getInstance()
+                .also { it.set(Calendar.DAY_OF_WEEK, -4) }.timeInMillis
         )
     )
 
@@ -58,7 +69,7 @@ fun getData(): MutableList<TodoItem> {
             id = 4.toString(),
             text = texts[0],
             importance = Importance.IMPORTANT,
-            isDone = false ,
+            isDone = false,
             creationDate = Calendar.getInstance().timeInMillis
         )
     )
@@ -68,7 +79,7 @@ fun getData(): MutableList<TodoItem> {
             id = 5.toString(),
             text = texts[0],
             importance = Importance.LOW,
-            isDone = false ,
+            isDone = false,
             creationDate = Calendar.getInstance().timeInMillis
         )
     )
@@ -78,8 +89,9 @@ fun getData(): MutableList<TodoItem> {
             id = 6.toString(),
             text = texts[0],
             importance = Importance.BASIC,
-            deadline = Calendar.getInstance().also { it.add(Calendar.DAY_OF_MONTH, 2) }.timeInMillis,
-            isDone = false ,
+            deadline = Calendar.getInstance()
+                .also { it.add(Calendar.DAY_OF_MONTH, 2) }.timeInMillis,
+            isDone = false,
             creationDate = Calendar.getInstance().timeInMillis
         )
     )

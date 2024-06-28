@@ -7,5 +7,5 @@ sealed class Destination {
     data object List : Destination()
 
     @Serializable
-    data class Edit(val id: String = "") : Destination()
+    data class Edit(val id: String?) : Destination()
 }

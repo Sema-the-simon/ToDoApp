@@ -3,6 +3,7 @@ package com.example.todoapp.ui.screens.edit.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -17,12 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
-import com.example.todoapp.ui.screens.edit.action.EditUiAction
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightLabelDisable
+import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Red
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 
 
 @Composable
@@ -31,7 +33,7 @@ fun EditDeleteButton(
     onClick: () -> Unit
 ) {
     val deleteButtonColor by animateColorAsState(
-        targetValue = if (enabled) Red else LightLabelDisable,
+        targetValue = if (enabled) Red else ExtendedTheme.colors.labelDisable,
         label = "delete_button_color_animation"
     )
 
@@ -41,7 +43,9 @@ fun EditDeleteButton(
         enabled = enabled,
         colors = ButtonDefaults.textButtonColors(
             contentColor = deleteButtonColor,
-            disabledContentColor = deleteButtonColor
+            disabledContentColor = deleteButtonColor,
+            containerColor = ExtendedTheme.colors.backPrimary,
+            disabledContainerColor = ExtendedTheme.colors.backPrimary
         )
     ) {
         Icon(
@@ -51,7 +55,7 @@ fun EditDeleteButton(
         )
         Text(
             text = stringResource(id = R.string.delete_title),
-            style = MaterialTheme.typography.bodyLarge,
+            style = ExtendedTheme.typography.button,
             modifier = Modifier.padding(start = 5.dp)
         )
     }
@@ -59,11 +63,19 @@ fun EditDeleteButton(
 
 @Preview
 @Composable
-fun PreviewDeleteButton() {
-    Box(Modifier.background(LightBackPrimary)) {
-        EditDeleteButton(
-            enabled = false,
-            onClick = {}
-        )
+fun PreviewDeleteButton(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme {
+        Column{
+            EditDeleteButton(
+                enabled = true,
+                onClick = {}
+            )
+            EditDeleteButton(
+                enabled = false,
+                onClick = {}
+            )
+        }
     }
 }

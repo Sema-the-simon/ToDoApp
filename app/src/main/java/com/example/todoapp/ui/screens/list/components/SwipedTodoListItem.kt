@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.screens.list.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -11,7 +12,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
+import com.example.todoapp.utils.getData
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +43,7 @@ fun SwipedTodoListItem(
                     onUpdateSwipe()
                     false
                 }
+
                 SwipeToDismissBoxValue.EndToStart -> {
                     show = false
                     true
@@ -66,6 +73,38 @@ fun SwipedTodoListItem(
             delay(100)
             onDeleteSwipe()
             show = true
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun SwipedItemPreview(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme {
+        Column {
+            SwipedTodoListItem(
+                todoItem = getData()[0],
+                onCheckboxClick = { },
+                onItemClick = { },
+                onDeleteSwipe = { },
+                onUpdateSwipe = { }
+            )
+            SwipedTodoListItem(
+                todoItem = getData()[3],
+                onCheckboxClick = { },
+                onItemClick = { },
+                onDeleteSwipe = { },
+                onUpdateSwipe = { }
+            )
+            SwipedTodoListItem(
+                todoItem = getData()[4],
+                onCheckboxClick = { },
+                onItemClick = { },
+                onDeleteSwipe = { },
+                onUpdateSwipe = { }
+            )
         }
     }
 }

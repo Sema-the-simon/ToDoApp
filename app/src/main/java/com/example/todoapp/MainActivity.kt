@@ -3,8 +3,13 @@ package com.example.todoapp
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.todoapp.ui.navigation.AppNavHost
+import com.example.todoapp.ui.themes.TodoAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -13,7 +18,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            AppNavHost(navController)
+            TodoAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavHost(navController)
+                }
+            }
         }
     }
 }

@@ -25,15 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.themes.Blue
 import com.example.todoapp.ui.themes.BlueTranslucent
-import com.example.todoapp.ui.themes.LightBackElevated
-import com.example.todoapp.ui.themes.LightBackPrimary
-import com.example.todoapp.ui.themes.LightLabelPrimary
-import com.example.todoapp.ui.themes.LightSupportOverlay
+import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.ThemePreview
+import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.utils.formatLongToDatePattern
 
 
@@ -46,6 +46,7 @@ fun EditDeadlineField(
 ) {
     Row(
         modifier = Modifier
+            .background(ExtendedTheme.colors.backPrimary)
             .fillMaxWidth()
             .padding(all = 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -63,7 +64,7 @@ fun EditDeadlineField(
             Text(
                 text = stringResource(id = R.string.deadline_title),
                 modifier = Modifier.padding(start = 5.dp),
-                color = LightLabelPrimary
+                color = ExtendedTheme.colors.labelPrimary
             )
             AnimatedVisibility(visible = isDeadlineSet) {
                 Box(modifier = Modifier.padding(5.dp)) {
@@ -83,9 +84,9 @@ fun EditDeadlineField(
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Blue,
                 checkedTrackColor = BlueTranslucent,
-                uncheckedThumbColor = LightBackElevated,
-                uncheckedTrackColor = LightSupportOverlay,
-                uncheckedBorderColor = LightSupportOverlay,
+                uncheckedThumbColor = ExtendedTheme.colors.backElevated,
+                uncheckedTrackColor = ExtendedTheme.colors.supportOverlay,
+                uncheckedBorderColor = ExtendedTheme.colors.supportOverlay,
             )
         )
         if (isDialogOpen) {
@@ -143,8 +144,10 @@ private fun DeadlineDatePicker(
 
 @Preview
 @Composable
-fun PreviewDeadline() {
-    Box(Modifier.background(LightBackPrimary)) {
+fun PreviewDeadline(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
         EditDeadlineField(
             deadline = 1696693800000L,
             isDeadlineSet = true,
