@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     //compose
     implementation(platform(libs.androidx.compose.bom))
@@ -75,6 +76,15 @@ dependencies {
     implementation( libs.androidx.hilt.navigation.compose)
     //serializable
     implementation(libs.kotlinx.serialization.json)
+    //ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    //implementation(libs.slf4j.android)
+
+
 
 
     androidTestImplementation(libs.androidx.junit)

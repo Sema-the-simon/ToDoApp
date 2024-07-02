@@ -21,7 +21,7 @@ class ListViewModel @Inject constructor(
     val uiState = combine(
         _uiState,
         repository.todoItems,
-        repository.isTuskFiltered
+        repository.isTaskFiltered
     ) { state, tasks, isFiltered ->
         state.copy(
             todoItems = tasks.withFilter(isFiltered),
