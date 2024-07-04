@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.Red
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.utils.getData
@@ -29,22 +31,34 @@ import com.example.todoapp.utils.getData
 @Composable
 fun TodoList(
     todoList: List<TodoItem>,
+    isDataSynchronized: Boolean,
     onItemClick: (String?) -> Unit,
     onDelete: (TodoItem) -> Unit,
     onUpdate: (TodoItem) -> Unit,
+    modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState()
 ) {
+
     LazyColumn(
         state = listState,
-        modifier = Modifier
+        contentPadding = PaddingValues(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
             .padding(horizontal = 8.dp)
             .shadow(
                 elevation = 2.dp,
                 shape = RoundedCornerShape(12.dp),
             )
             .background(ExtendedTheme.colors.backSecondary),
-        contentPadding = PaddingValues(vertical = 8.dp),
     ) {
+        if (!isDataSynchronized)
+            item {
+                Text(
+                    text = stringResource(R.string.unsync_data_warning),
+                    style = ExtendedTheme.typography.subhead,
+                    color = Red
+                )
+            }
         items(todoList, key = { it.id }) { todoItem ->
             SwipedTodoListItem(
                 todoItem = todoItem,
@@ -90,6 +104,7 @@ fun PreviewToDoItemList(
     TodoAppTheme(isDarkTheme) {
         TodoList(
             todoList = getData().filter { it.id < 4.toString() },
+            isDataSynchronized = false,
             onItemClick = {},
             onDelete = {},
             onUpdate = {}

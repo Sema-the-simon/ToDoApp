@@ -1,10 +1,8 @@
 package com.example.todoapp.ui.screens.list.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.AnimationVector2D
-import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateValueAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +18,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -45,28 +41,24 @@ fun ListTopAppBar(
     isFiltered: Boolean = false,
     onVisibilityClick: (Boolean) -> Unit = {}
 ) {
-    val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 1f) true else false
-    val titleStyle: TextStyle by animateValueAsState(
+    val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 0.8f) true else false
+
+    val fontSize = animateFloatAsState(
         targetValue = if (isTittleExpand)
-            ExtendedTheme.typography.largeTitle
+            ExtendedTheme.typography.largeTitle.fontSize.value
         else
-            ExtendedTheme.typography.title,
-        typeConverter = TwoWayConverter<TextStyle, AnimationVector2D>(
-            convertToVector = {
-                AnimationVector2D(
-                    it.fontSize.value,
-                    it.lineHeight.value
-                )
-            },
-            convertFromVector = {
-                TextStyle(
-                    fontSize = it.v1.sp,
-                    lineHeight = it.v2.sp
-                )
-            }
-        ),
-        label = "TopAppTitle"
+            ExtendedTheme.typography.title.fontSize.value,
+        label = "TitleFontSize"
     )
+    val lineHeight = animateFloatAsState(
+        targetValue =
+        if (isTittleExpand)
+            ExtendedTheme.typography.largeTitle.lineHeight.value
+        else
+            ExtendedTheme.typography.title.lineHeight.value,
+        label = "TitleLineHeight"
+    )
+
     val isShadowNeed = scrollBehavior.state.contentOffset < 0
     val elevation = animateDpAsState(
         targetValue = if (isShadowNeed) {
@@ -98,7 +90,10 @@ fun ListTopAppBar(
                     Text(
                         text = stringResource(R.string.todolist_title),
                         color = ExtendedTheme.colors.labelPrimary,
-                        style = titleStyle
+                        style = ExtendedTheme.typography.largeTitle.copy(
+                            fontSize = fontSize.value.sp,
+                            lineHeight = lineHeight.value.sp
+                        )
                     )
                     AnimatedVisibility(
                         visible = isTittleExpand,

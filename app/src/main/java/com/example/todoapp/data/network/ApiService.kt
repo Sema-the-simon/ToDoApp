@@ -44,7 +44,7 @@ class ApiService @Inject constructor(
             }
         }
 
-    private fun <E> handleError(e: Exception): Result.Error<E> {
+    private fun  handleError(e: Exception): Result.Error {
         return when (e) {
             is CancellationException -> throw e
             is ResponseException -> {
@@ -147,6 +147,7 @@ class ApiService @Inject constructor(
                     url {
                         appendPathSegments("list", id)
                     }
+                    header(REVISION_HEADER, revision)
                     expectSuccess = true
                 }
             response.body()

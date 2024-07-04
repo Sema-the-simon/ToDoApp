@@ -5,12 +5,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface Repository {
     val todoItems: StateFlow<List<TodoItem>>
-    val isTuskFiltered: StateFlow<Boolean>
+    val isNetworkAvailable: StateFlow<Boolean>
+    val isDataSynchronized: StateFlow<Boolean>
 
     suspend fun countDoneTodos(): Int
     suspend fun addTodoItem(todoItem: TodoItem)
     suspend fun updateItem(todoItem: TodoItem)
     suspend fun removeItem(id: String)
     suspend fun getTodoItem(id: String): TodoItem?
-    suspend fun changeFilterState(isFiltered: Boolean)
+    suspend fun loadTodoItems()
 }

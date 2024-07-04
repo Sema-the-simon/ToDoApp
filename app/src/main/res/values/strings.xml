@@ -14,4 +14,5 @@
     <string name="deadline_calendar_cancel">Cancel</string>
     <string name="delete_title">Delete</string>
     <string name="add_new_task_text_field">New</string>
+    <string name="unsync_data_warning">Unsynchronized data</string>
 </resources>

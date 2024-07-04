@@ -15,4 +15,5 @@
     <string name="deadline_calendar_cancel">Отмена</string>
     <string name="delete_title">Удалить</string>
     <string name="add_new_task_text_field">Новое</string>
+    <string name="unsync_data_warning">Данные не синхронизованы</string>
 </resources>

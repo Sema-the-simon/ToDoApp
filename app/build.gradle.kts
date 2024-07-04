@@ -63,7 +63,7 @@ dependencies {
     //compose
     implementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
@@ -73,7 +73,7 @@ dependencies {
     //hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-    implementation( libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     //serializable
     implementation(libs.kotlinx.serialization.json)
     //ktor
@@ -82,10 +82,11 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
-    //implementation(libs.slf4j.android)
-
-
-
+    // work manager with hilt
+    implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
+    //datastore
+    implementation(libs.androidx.datastore)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

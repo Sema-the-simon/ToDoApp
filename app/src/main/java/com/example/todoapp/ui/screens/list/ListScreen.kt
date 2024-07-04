@@ -1,7 +1,10 @@
 package com.example.todoapp.ui.screens.list
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -11,9 +14,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,16 +25,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import com.example.todoapp.data.network.addItemToServer
-import com.example.todoapp.data.network.closeConnection
-import com.example.todoapp.data.network.getListFromServer
 import com.example.todoapp.ui.screens.list.action.ListUiAction
 import com.example.todoapp.ui.screens.list.components.ListTopAppBar
 import com.example.todoapp.ui.screens.list.components.TodoList
@@ -49,13 +48,13 @@ fun ListScreen(
     onUiAction: (ListUiAction) -> Unit,
     navigateToEditItem: (String?) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
+
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val listState = rememberLazyListState()
 
-    val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+    val listState = rememberLazyListState()
     var needToScroll by remember { mutableStateOf(false) }
+    val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     LaunchedEffect(needToScroll && !isTopScroll) {
         launch {
@@ -63,8 +62,21 @@ fun ListScreen(
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(uiState.showErrorMessage) {
+        uiState.errorMessage?.let {
+            launch {
+                snackbarHostState.showSnackbar(uiState.errorMessage)
+                onUiAction(ListUiAction.ClearErrorMessage)
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             ListTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -90,43 +102,27 @@ fun ListScreen(
         },
         containerColor = ExtendedTheme.colors.backPrimary,
     ) { paddingValues ->
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+        PullToRefreshBox(
+            modifier = Modifier.padding(paddingValues),
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = { onUiAction(ListUiAction.RefreshList) }
         ) {
-
-            TextButton(onClick = {
-                scope.launch {
-                    getListFromServer()
-                }
-            }) {
-                Text(text = "do network call")
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .scrollable(rememberLazyListState(), orientation = Orientation.Vertical)
+            ) {
+                TodoList(
+                    listState = listState,
+                    todoList = uiState.todoItems,
+                    isDataSynchronized = uiState.isDataSynchronized,
+                    onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
+                    onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
+                    onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
             }
-
-            TextButton(onClick = {
-                scope.launch {
-                    addItemToServer()
-                }
-            }) {
-                Text(text = "add item network call")
-            }
-
-            TextButton(onClick = {
-                closeConnection()
-            }) {
-                Text(text = "close connection")
-            }
-
-
-            TodoList(
-                listState = listState,
-                todoList = uiState.todoItems,
-                onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
-                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
-                onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) }
-            )
         }
     }
 
@@ -139,6 +135,6 @@ fun PreviewListScreen(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {
-        ListScreen(ListUiState(getData(), 1), {}, {})
+        ListScreen(ListUiState(getData().take(2), 1), {}, {})
     }
 }

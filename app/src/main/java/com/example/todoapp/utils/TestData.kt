@@ -12,7 +12,7 @@ fun fakeNetworkOrDatabaseCall(id: String): TodoItem? {
     return getData().random().copy(id = id)
 }
 
-fun getData(): MutableList<TodoItem> {
+fun getData(n: Int = 15): MutableList<TodoItem> {
     val data = mutableListOf<TodoItem>()
     val texts = listOf(
         "Купить что-то",
@@ -96,7 +96,7 @@ fun getData(): MutableList<TodoItem> {
         )
     )
 
-    for (i in 7..15) {
+    for (i in 7..n) {
         data.add(
             TodoItem(
                 id = i.toString(),
