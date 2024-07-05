@@ -6,16 +6,14 @@ import com.example.todoapp.data.Repository
 import com.example.todoapp.data.datastore.DataStoreManager
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.ui.screens.list.action.ListUiAction
+import com.example.todoapp.utils.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,14 +25,16 @@ class ListViewModel @Inject constructor(
     val uiState: StateFlow<ListUiState> = combine(
         _uiState,
         repository.todoItems,
-        repository.isDataSynchronized,
+        repository.dataState,
         dataStoreManager.userPreferences
-    ) { state, tasks, isSync, pref ->
+    ) { state, tasks, dataState, pref ->
         state.copy(
             todoItems = tasks.withFilter(pref.isListFilter),
             countDoneTasks = repository.countDoneTodos(),
             isFiltered = pref.isListFilter,
-            isDataSynchronized = isSync
+            isDataSynchronized = dataState.isDataSynchronized,
+            isRefreshing = dataState.isDataLoading,
+            errorMessage = dataState.errorMessage
         )
     }.stateIn(
         scope = viewModelScope,
@@ -48,12 +48,7 @@ class ListViewModel @Inject constructor(
             is ListUiAction.RemoveTodoItem -> removeTodoItem(action.todoItemId)
             is ListUiAction.ChangeFilter -> changeFilterState(action.isFiltered)
             ListUiAction.RefreshList -> refreshList()
-            ListUiAction.ClearErrorMessage -> _uiState.update {
-                it.copy(
-                    showErrorMessage = false,
-                    errorMessage = null
-                )
-            }
+            ListUiAction.ClearErrorMessage -> clearErrorMessage()
         }
     }
 
@@ -61,10 +56,10 @@ class ListViewModel @Inject constructor(
         if (isFiltered) this.filter { !it.isDone } else this
 
     private fun updateTodoItem(todoItemId: String) {
-        _uiState.value.todoItems.find { it.id == todoItemId }?.let { item ->
+        uiState.value.todoItems.find { it.id == todoItemId }?.let { item ->
             viewModelScope.launch {
                 repository.updateItem(
-                    item.copy(isDone = item.let { !it.isDone })
+                    item.copy(isDone = !item.isDone)
                 )
             }
         }
@@ -83,28 +78,14 @@ class ListViewModel @Inject constructor(
     }
 
     private fun refreshList() {
-        _uiState.update { uiState.value.copy(isRefreshing = true) }
         viewModelScope.launch {
-            if (repository.isNetworkAvailable.value) {
-                try {
-                    repository.loadTodoItems()
-                } catch (e: IOException) {
-                    showErrorMessage("Something went wrong, try again later")
-                }
-            } else {
-                delay(300)
-                showErrorMessage("No Internet Connection")
-            }
-            _uiState.update { uiState.value.copy(isRefreshing = false) }
+            repository.loadTodoItems()
         }
     }
 
-    private fun showErrorMessage(message: String) {
-        _uiState.update {
-            it.copy(
-                errorMessage = message,
-                showErrorMessage = true
-            )
+    private fun clearErrorMessage() {
+        viewModelScope.launch {
+            repository.clearErrorMessage()
         }
     }
 }
@@ -115,7 +96,6 @@ data class ListUiState(
     val isFiltered: Boolean = false,
     val isDataSynchronized: Boolean = false,
     val isRefreshing: Boolean = false,
-    val errorMessage: String? = null,
-    val showErrorMessage: Boolean = false,
+    val errorMessage: UserError? = null
 )
 

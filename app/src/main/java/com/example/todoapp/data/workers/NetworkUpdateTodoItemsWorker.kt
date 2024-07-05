@@ -8,7 +8,6 @@ import androidx.work.WorkerParameters
 import com.example.todoapp.data.Repository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.io.IOException
 
 
 @HiltWorker
@@ -23,9 +22,6 @@ class NetworkUpdateTodoItemsWorker @AssistedInject constructor(
         repository.loadTodoItems()
         Result.success()
     } catch (error: Throwable) {
-        when (error) {
-            is IOException -> Result.retry()
-            else -> Result.failure()
-        }
+        Result.failure()
     }
 }

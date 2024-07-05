@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.ui.screens.list.action.ListUiAction
@@ -63,10 +64,11 @@ fun ListScreen(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(uiState.showErrorMessage) {
+    val context = LocalContext.current
+    LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
             launch {
-                snackbarHostState.showSnackbar(uiState.errorMessage)
+                snackbarHostState.showSnackbar(context.getString(uiState.errorMessage.toStringResource()))
                 onUiAction(ListUiAction.ClearErrorMessage)
             }
         }
@@ -116,9 +118,9 @@ fun ListScreen(
                     listState = listState,
                     todoList = uiState.todoItems,
                     isDataSynchronized = uiState.isDataSynchronized,
+                    onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
                     onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
                     onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
-                    onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
                     modifier = Modifier
                         .fillMaxWidth()
                 )

@@ -20,10 +20,10 @@ import kotlinx.coroutines.flow.update
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-private const val REFRESH_RATE_HOURS = 8L
-private const val ON_START_UPDATE_WORKER_NAME = "OnStartUpdateWorker"
+private const val ONCE_UPDATE_WORKER_NAME = "OnceUpdateWorker"
 private const val TAG_UPDATE_TODO_ITEMS = "UpdateTodoItemsTag"
 
+private const val REFRESH_RATE_HOURS = 8L
 private const val PERIODIC_UPDATE_WORKER_NAME = "PeriodicUpdateWorker"
 private const val TAG_PERIODIC_UPDATE_TODO_ITEMS = "PeriodicUpdateTodoItemsTag"
 
@@ -50,7 +50,7 @@ class TodoItemsDataSource @Inject constructor(
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
-    fun loadTodoItemsOnStart() {
+    fun loadTodoItemsOnce() {
         val request = OneTimeWorkRequestBuilder<NetworkUpdateTodoItemsWorker>()
             .setConstraints(networkConstraints)
             .setBackoffCriteria(
@@ -61,7 +61,7 @@ class TodoItemsDataSource @Inject constructor(
             .addTag(TAG_UPDATE_TODO_ITEMS)
             .build()
         workManager.enqueueUniqueWork(
-            ON_START_UPDATE_WORKER_NAME,
+            ONCE_UPDATE_WORKER_NAME,
             ExistingWorkPolicy.KEEP,
             request
         )
@@ -89,6 +89,7 @@ class TodoItemsDataSource @Inject constructor(
                 _internetConnectionState.update {
                     true
                 }
+                loadTodoItemsOnce()
             }
 
             override fun onLost(network: Network) {

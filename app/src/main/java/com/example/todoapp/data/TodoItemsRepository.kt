@@ -12,20 +12,21 @@ import com.example.todoapp.data.network.model.handle
 import com.example.todoapp.data.network.model.toTodoItem
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.di.DefaultDispatcher
+import com.example.todoapp.utils.UserError
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import javax.inject.Inject
 
 class TodoItemsRepository @Inject constructor(
@@ -40,26 +41,43 @@ class TodoItemsRepository @Inject constructor(
     private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
     override val todoItems = _todoItems.asStateFlow()
 
-    override val isNetworkAvailable = dataSource.internetConnectionState
-
-    private val _isDataSynchronized = MutableStateFlow(false)
-    override val isDataSynchronized = combine(
-        _isDataSynchronized,
-        isNetworkAvailable,
-    ) { dataSync, internetConnection ->
-        val newValue = dataSync && internetConnection
-        val oldValue = _isDataSynchronized.value
-        //if (newValue != oldValue)
-        _isDataSynchronized.update {
-            newValue
+    private val _dataState: MutableStateFlow<Repository.DataState> =
+        MutableStateFlow(Repository.DataState())
+    override val dataState: StateFlow<Repository.DataState> = _dataState.asStateFlow()
+    private var isDataLoading: Boolean
+        get() = dataState.value.isDataLoading
+        set(value) {
+            _dataState.update { it.copy(isDataLoading = value) }
         }
-        newValue
-    }.stateIn(
-        scope = externalScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
-    )
 
+    private var isDataSynchronized: Boolean
+        get() = dataState.value.isDataSynchronized
+        set(value) {
+            _dataState.update { it.copy(isDataSynchronized = value) }
+        }
+
+    private var errorMessage: UserError?
+        get() = dataState.value.errorMessage
+        set(value) {
+            _dataState.update { it.copy(errorMessage = value) }
+        }
+    //        combine(
+//        _isDataSynchronized,
+//        isNetworkAvailable,
+//    ) { dataSync, internetConnection ->
+//        val newValue = dataSync && internetConnection
+//        _isDataSynchronized.update {
+//            newValue
+//        }
+//        newValue
+//    }.stateIn(
+//        scope = externalScope,
+//        started = SharingStarted.WhileSubscribed(5_000),
+//        initialValue = false
+//    )
+
+    private val isNetworkAvailable = dataSource.internetConnectionState
+    private val revisionMutex = Mutex()
     private var revision = 0
     private var userId = ""
 
@@ -71,26 +89,16 @@ class TodoItemsRepository @Inject constructor(
 
     init {
         getUserId()
-        dataSource.loadTodoItemsOnStart()
+        dataSource.loadTodoItemsOnce()
         dataSource.loadTodoItemsPeriodically()
     }
+
+    override suspend fun countDoneTodos(): Int = todoItems.value.count { it.isDone }
 
     private fun loggError(error: Result.Error) {
         val code = if (error.errorCode != -1) "[${error.errorCode}]: " else ""
         val message = "$code${error.errorMessage}"
         Log.d("networkTEST", message)
-    }
-
-    private fun dataToString(data: ResponseBody): String {
-        return when (data) {
-            is ResponseBody.TodoElement -> {
-                data.element.toString()
-            }
-
-            is ResponseBody.TodoList -> {
-                "\n" + data.list.joinToString(separator = "\n")
-            }
-        }
     }
 
     private fun loggSuccess(data: ResponseBody) {
@@ -110,6 +118,18 @@ class TodoItemsRepository @Inject constructor(
         Log.d("networkTEST", message)
     }
 
+    private fun dataToString(data: ResponseBody): String {
+        return when (data) {
+            is ResponseBody.TodoElement -> {
+                data.element.toString()
+            }
+
+            is ResponseBody.TodoList -> {
+                "\n" + data.list.joinToString(separator = "\n")
+            }
+        }
+    }
+
     private fun MutableList<TodoItem>.mergeWith(list: List<TodoItem>) {
         val setIds = this.map { it.id }.toHashSet()
         list.forEach { el ->
@@ -120,33 +140,77 @@ class TodoItemsRepository @Inject constructor(
         }
     }
 
-    override suspend fun loadTodoItems() = withContext(defaultDispatcher) {
-        val result = externalScope.async { api.getTodoList() }.await()
-        result.handle(
-            onSuccess = { data ->
-                val newElements = data.list.map { it.toTodoItem() }
-                _todoItems.update {
-                    todoItems.value.toMutableList().apply { mergeWith(newElements) }
+    private suspend fun synchronizedNetworkRun(action: suspend CoroutineScope.() -> Unit) {
+        if (isNetworkAvailable.value) {
+            externalScope.launch {
+                revisionMutex.withLock {
+                    action()
                 }
-                revision = data.revision
-                _isDataSynchronized.update { true }
-                loggSuccess(data)
-            },
-            onError = { error ->
-                loggError(error)
-                val errorMessage = if (error.errorCode == HttpStatusCode.InternalServerError.value)
-                    "Server error: " + error.errorMessage
-                else
-                    "Something went wrong"
-                throw IOException(errorMessage)
-            },
-        )
+            }
+        } else {
+            if (isDataLoading) {
+                delay(10)
+                isDataLoading = false
+                errorMessage = UserError.NoInternetConnection
+            }
+            isDataSynchronized = false
+        }
     }
 
-    override suspend fun countDoneTodos(): Int = todoItems.value.count { it.isDone }
+    private val handleServerError: (error: Result.Error) -> Unit = { error ->
+        loggError(error)
+        errorMessage = when (error.errorCode) {
+            HttpStatusCode.InternalServerError.value -> UserError.InternalServerError
+            HttpStatusCode.BadRequest.value -> UserError.UnsynchronizedData
+            HttpStatusCode.Unauthorized.value -> UserError.Unauthorized
+            HttpStatusCode.NotFound.value -> UserError.NotFound
+            else -> UserError.Unexpected
+        }
+    }
+
+    override suspend fun loadTodoItems() = withContext(defaultDispatcher) {
+        isDataLoading = true
+        synchronizedNetworkRun {
+            val result = async { api.getTodoList() }.await()
+            result.handle(
+                onSuccess = { data ->
+                    val newElements = data.list.map { it.toTodoItem() }
+                    _todoItems.update {
+                        todoItems.value.toMutableList().apply { mergeWith(newElements) }
+                    }
+                    revision = data.revision
+                    isDataLoading = false
+                    isDataSynchronized = true
+
+                    syncWithServer()
+
+                    loggSuccess(data)
+                },
+                onError = handleServerError,
+            )
+        }
+    }
 
     private fun createElementRequest(element: TodoItem): RequestBody.TodoElement =
         RequestBody.TodoElement(element.asDto(userId))
+
+    private fun createListRequest(list: List<TodoItem>): RequestBody.TodoList =
+        RequestBody.TodoList(list.map { it.asDto(userId) })
+
+    private suspend fun syncWithServer() {
+        synchronizedNetworkRun {
+            val result = async {
+                api.updateList(revision, createListRequest(todoItems.value))
+            }.await()
+            result.handle(
+                onSuccess = { data ->
+                    revision = data.revision
+                    loggSuccess(data)
+                },
+                onError = handleServerError,
+            )
+        }
+    }
 
     override suspend fun addTodoItem(todoItem: TodoItem) = withContext(defaultDispatcher) {
         _todoItems.update {
@@ -154,8 +218,8 @@ class TodoItemsRepository @Inject constructor(
             updatedList.add(todoItem)
             updatedList.toList()
         }
-        if (isNetworkAvailable.value) {
-            val result = externalScope.async {
+        synchronizedNetworkRun {
+            val result = async {
                 api.addItem(revision, createElementRequest(todoItem))
             }.await()
 
@@ -164,9 +228,7 @@ class TodoItemsRepository @Inject constructor(
                     revision = data.revision
                     loggSuccess(data)
                 },
-                onError = { error ->
-                    loggError(error)
-                },
+                onError = handleServerError,
             )
         }
     }
@@ -182,8 +244,8 @@ class TodoItemsRepository @Inject constructor(
                     }
                 }
             }
-            if (isNetworkAvailable.value) {
-                val result = externalScope.async {
+            synchronizedNetworkRun {
+                val result = async {
                     api.editItem(revision, createElementRequest(todoItem))
                 }.await()
 
@@ -192,12 +254,9 @@ class TodoItemsRepository @Inject constructor(
                         revision = data.revision
                         loggSuccess(data)
                     },
-                    onError = { error ->
-                        loggError(error)
-                    },
+                    onError = handleServerError,
                 )
             }
-
         }
     }
 
@@ -207,23 +266,25 @@ class TodoItemsRepository @Inject constructor(
             _todoItems.update { currentList ->
                 currentList.filter { it.id != id }
             }
-            if (isNetworkAvailable.value) {
-                val result = externalScope.async { api.deleteItem(revision, id) }.await()
-
+            synchronizedNetworkRun {
+                val result = async { api.deleteItem(revision, id) }.await()
                 result.handle(
                     onSuccess = { data ->
                         revision = data.revision
                         loggSuccess(data)
                     },
-                    onError = { error ->
-                        loggError(error)
-                    },
+                    onError = handleServerError,
                 )
+
             }
         }
     }
 
     override suspend fun getTodoItem(id: String): TodoItem? = withContext(defaultDispatcher) {
         _todoItems.value.firstOrNull { it.id == id }
+    }
+
+    override suspend fun clearErrorMessage() {
+        errorMessage = null
     }
 }
