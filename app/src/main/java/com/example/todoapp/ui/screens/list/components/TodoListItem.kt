@@ -27,11 +27,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todoapp.R
-import com.example.todoapp.data.model.Importance
-import com.example.todoapp.data.model.Importance.BASIC
-import com.example.todoapp.data.model.Importance.IMPORTANT
-import com.example.todoapp.data.model.Importance.LOW
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.Importance.BASIC
+import com.example.todoapp.domain.model.Importance.IMPORTANT
+import com.example.todoapp.domain.model.Importance.LOW
+import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme

@@ -1,8 +1,8 @@
 package com.example.todoapp.utils
 
 import android.icu.util.Calendar
-import com.example.todoapp.data.model.Importance
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import java.io.IOException
 import kotlin.random.Random
 

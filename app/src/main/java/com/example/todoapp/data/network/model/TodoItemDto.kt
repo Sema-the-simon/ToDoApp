@@ -1,6 +1,6 @@
 package com.example.todoapp.data.network.model
 
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.utils.toImportance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

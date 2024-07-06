@@ -2,7 +2,7 @@ package com.example.todoapp.data.network
 
 import com.example.todoapp.data.network.model.RequestBody
 import com.example.todoapp.data.network.model.ResponseBody
-import com.example.todoapp.data.network.model.Result
+import com.example.todoapp.data.network.model.ResponseResult
 import com.example.todoapp.di.IoDispatcher
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -34,33 +34,33 @@ class ApiService @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : Api {
 
-    private suspend fun <T : ResponseBody> getResult(block: suspend CoroutineScope.() -> T): Result<T> =
+    private suspend fun <T : ResponseBody> getResult(block: suspend CoroutineScope.() -> T): ResponseResult<T> =
         withContext(ioDispatcher) {
             try {
                 val body: T = block()
-                Result.Success(body)
+                ResponseResult.Success(body)
             } catch (e: Exception) {
                 handleError(e)
             }
         }
 
-    private fun  handleError(e: Exception): Result.Error {
+    private fun  handleError(e: Exception): ResponseResult.Error {
         return when (e) {
             is CancellationException -> throw e
             is ResponseException -> {
-                Result.Error(
+                ResponseResult.Error(
                     errorMessage = e.message ?: "network error",
                     errorCode = e.response.status.value
                 )
             }
 
             else -> {
-                Result.Error(errorMessage = "${e.javaClass} ${e.message}")
+                ResponseResult.Error(errorMessage = "${e.javaClass} ${e.message}")
             }
         }
     }
 
-    override suspend fun getTodoList(): Result<ResponseBody.TodoList> =
+    override suspend fun getTodoList(): ResponseResult<ResponseBody.TodoList> =
         getResult {
             val response: HttpResponse = client
                 .get(BASE_URL) {
@@ -77,7 +77,7 @@ class ApiService @Inject constructor(
     override suspend fun updateList(
         revision: Int,
         req: RequestBody.TodoList
-    ): Result<ResponseBody.TodoList> =
+    ): ResponseResult<ResponseBody.TodoList> =
         getResult {
             val response: HttpResponse = client
                 .patch(BASE_URL) {
@@ -92,7 +92,7 @@ class ApiService @Inject constructor(
             response.body()
         }
 
-    override suspend fun getItemById(revision: Int, id: String): Result<ResponseBody.TodoElement> =
+    override suspend fun getItemById(revision: Int, id: String): ResponseResult<ResponseBody.TodoElement> =
         getResult {
             val response: HttpResponse = client
                 .get(BASE_URL) {
@@ -107,7 +107,7 @@ class ApiService @Inject constructor(
     override suspend fun addItem(
         revision: Int,
         req: RequestBody.TodoElement
-    ): Result<ResponseBody.TodoElement> =
+    ): ResponseResult<ResponseBody.TodoElement> =
         getResult {
             val response: HttpResponse = client
                 .post(BASE_URL) {
@@ -125,7 +125,7 @@ class ApiService @Inject constructor(
     override suspend fun editItem(
         revision: Int,
         req: RequestBody.TodoElement
-    ): Result<ResponseBody.TodoElement> =
+    ): ResponseResult<ResponseBody.TodoElement> =
         getResult {
             val response: HttpResponse = client
                 .put(BASE_URL) {
@@ -140,7 +140,7 @@ class ApiService @Inject constructor(
             response.body()
         }
 
-    override suspend fun deleteItem(revision: Int, id: String): Result<ResponseBody.TodoElement> =
+    override suspend fun deleteItem(revision: Int, id: String): ResponseResult<ResponseBody.TodoElement> =
         getResult {
             val response: HttpResponse = client
                 .delete(BASE_URL) {

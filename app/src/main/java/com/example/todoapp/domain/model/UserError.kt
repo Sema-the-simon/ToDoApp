@@ -1,4 +1,4 @@
-package com.example.todoapp.utils
+package com.example.todoapp.domain.model
 
 import com.example.todoapp.R
 

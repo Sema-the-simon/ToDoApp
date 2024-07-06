@@ -1,4 +1,4 @@
-package com.example.todoapp.data.model
+package com.example.todoapp.domain.model
 
 data class TodoItem(
     val id: String,

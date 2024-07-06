@@ -2,11 +2,11 @@ package com.example.todoapp.ui.screens.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.Repository
-import com.example.todoapp.data.datastore.DataStoreManager
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.domain.model.UserError
+import com.example.todoapp.domain.usecases.FilterListUseCase
 import com.example.todoapp.ui.screens.list.action.ListUiAction
-import com.example.todoapp.utils.UserError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,19 +19,19 @@ import javax.inject.Inject
 @HiltViewModel
 class ListViewModel @Inject constructor(
     private val repository: Repository,
-    private val dataStoreManager: DataStoreManager
+    private val filterListUseCase: FilterListUseCase
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<ListUiState> = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = combine(
         _uiState,
         repository.todoItems,
         repository.dataState,
-        dataStoreManager.userPreferences
-    ) { state, tasks, dataState, pref ->
+        filterListUseCase.isFiltered
+    ) { state, tasks, dataState, isFiltered ->
         state.copy(
-            todoItems = tasks.withFilter(pref.isListFilter),
+            todoItems = filterListUseCase(tasks, isFiltered),
             countDoneTasks = repository.countDoneTodos(),
-            isFiltered = pref.isListFilter,
+            isFiltered = isFiltered,
             isDataSynchronized = dataState.isDataSynchronized,
             isRefreshing = dataState.isDataLoading,
             errorMessage = dataState.errorMessage
@@ -52,9 +52,6 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private fun List<TodoItem>.withFilter(isFiltered: Boolean): List<TodoItem> =
-        if (isFiltered) this.filter { !it.isDone } else this
-
     private fun updateTodoItem(todoItemId: String) {
         uiState.value.todoItems.find { it.id == todoItemId }?.let { item ->
             viewModelScope.launch {
@@ -73,7 +70,7 @@ class ListViewModel @Inject constructor(
 
     private fun changeFilterState(isFiltered: Boolean) {
         viewModelScope.launch {
-            dataStoreManager.saveFilterState(isFiltered)
+            filterListUseCase.changeFilterState(isFiltered)
         }
     }
 

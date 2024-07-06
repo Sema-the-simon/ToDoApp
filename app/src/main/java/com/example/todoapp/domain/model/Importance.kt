@@ -1,4 +1,4 @@
-package com.example.todoapp.data.model
+package com.example.todoapp.domain.model
 
 import com.example.todoapp.R
 
@@ -17,7 +17,7 @@ enum class Importance {
         override fun toServerFormatString() = "important"
     };
 
+
     abstract fun toStringResource(): Int
     abstract fun toServerFormatString(): String
-
 }

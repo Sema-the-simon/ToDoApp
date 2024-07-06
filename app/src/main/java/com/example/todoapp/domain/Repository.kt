@@ -1,7 +1,7 @@
-package com.example.todoapp.data
+package com.example.todoapp.domain
 
-import com.example.todoapp.data.model.TodoItem
-import com.example.todoapp.utils.UserError
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.domain.model.UserError
 import kotlinx.coroutines.flow.StateFlow
 
 interface Repository {

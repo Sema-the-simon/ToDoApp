@@ -1,9 +1,5 @@
 package com.example.todoapp.ui.screens.list
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,7 +48,6 @@ fun ListScreen(
 
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
     val listState = rememberLazyListState()
     var needToScroll by remember { mutableStateOf(false) }
     val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
@@ -109,26 +104,17 @@ fun ListScreen(
             isRefreshing = uiState.isRefreshing,
             onRefresh = { onUiAction(ListUiAction.RefreshList) }
         ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .scrollable(rememberLazyListState(), orientation = Orientation.Vertical)
-            ) {
-                TodoList(
-                    listState = listState,
-                    todoList = uiState.todoItems,
-                    isDataSynchronized = uiState.isDataSynchronized,
-                    onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
-                    onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
-                    onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
+            TodoList(
+                listState = listState,
+                todoList = uiState.todoItems,
+                isDataSynchronized = uiState.isDataSynchronized,
+                onAction = onUiAction,
+                onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         }
     }
-
-
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")

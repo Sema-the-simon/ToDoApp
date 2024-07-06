@@ -1,6 +1,6 @@
 package com.example.todoapp.ui.screens.edit.action
 
-import com.example.todoapp.data.model.Importance
+import com.example.todoapp.domain.model.Importance
 
 sealed class EditUiAction {
     data object SaveTask: EditUiAction()

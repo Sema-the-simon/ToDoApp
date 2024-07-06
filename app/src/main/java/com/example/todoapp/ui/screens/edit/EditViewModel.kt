@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.example.todoapp.data.Repository
-import com.example.todoapp.data.model.Importance
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ui.navigation.Destination
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.screens.edit.action.EditUiEvent

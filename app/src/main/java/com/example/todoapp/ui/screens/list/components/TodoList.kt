@@ -21,7 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.ui.screens.list.action.ListUiAction
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Red
 import com.example.todoapp.ui.themes.ThemePreview
@@ -32,9 +33,8 @@ import com.example.todoapp.utils.getData
 fun TodoList(
     todoList: List<TodoItem>,
     isDataSynchronized: Boolean,
-    onItemClick: (String?) -> Unit,
-    onDelete: (TodoItem) -> Unit,
-    onUpdate: (TodoItem) -> Unit,
+    onAction: (ListUiAction) -> Unit,
+    onItemClick:(todoItemId: String?) -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState()
 ) {
@@ -62,10 +62,10 @@ fun TodoList(
         items(todoList, key = { it.id }) { todoItem ->
             SwipedTodoListItem(
                 todoItem = todoItem,
-                onCheckboxClick = { onUpdate(todoItem) },
+                onCheckboxClick = { onAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
                 onItemClick = { onItemClick(todoItem.id) },
-                onDeleteSwipe = { onDelete(todoItem) },
-                onUpdateSwipe = { onUpdate(todoItem) },
+                onDeleteSwipe = { onAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
+                onUpdateSwipe = { onAction(ListUiAction.UpdateTodoItem(todoItem.id)) },
                 Modifier.animateItem(
                     placementSpec = tween(durationMillis = 150)
                 )
@@ -105,9 +105,8 @@ fun PreviewToDoItemList(
         TodoList(
             todoList = getData().filter { it.id < 4.toString() },
             isDataSynchronized = false,
+            onAction = {},
             onItemClick = {},
-            onDelete = {},
-            onUpdate = {}
         )
 
     }
