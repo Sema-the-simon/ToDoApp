@@ -9,12 +9,16 @@ import com.example.todoapp.data.model.Importance
 import com.example.todoapp.data.model.TodoItem
 import com.example.todoapp.ui.navigation.Destination
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
+import com.example.todoapp.ui.screens.edit.action.EditUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 
@@ -28,7 +32,7 @@ class EditViewModel @Inject constructor(
         id = UUID.randomUUID().toString(),
         text = "",
         importance = Importance.BASIC,
-        isDone = false ,
+        isDone = false,
         creationDate = System.currentTimeMillis()
     )
     private var isNewItem: Boolean = true
@@ -36,23 +40,28 @@ class EditViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EditUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _uiEvent = Channel<EditUiEvent>()
+    val uiEvent: Flow<EditUiEvent> = _uiEvent.receiveAsFlow()
+
     init {
         getTodoItemFromRepository()
     }
 
     private fun getTodoItemFromRepository() {
         viewModelScope.launch {
-            val id = savedStateHandle.toRoute<Destination.Edit>().id
-            repository.getTodoItem(id)?.let { item ->
-                todoItem = item
-                isNewItem = false
-
+            savedStateHandle.toRoute<Destination.Edit>().id?.let { id ->
+                try {
+                    todoItem = repository.getTodoItem(id) ?: return@let
+                    isNewItem = false
+                } catch (ioe: IOException) {
+                    _uiEvent.send(EditUiEvent.ShowSnackbar(ioe.message ?: "Something went wrong"))
+                }
                 _uiState.update {
                     uiState.value.copy(
-                        text = item.text,
-                        importance = item.importance,
-                        deadline = item.deadline ?: uiState.value.deadline,
-                        isDeadlineSet = item.deadline != null,
+                        text = todoItem.text,
+                        importance = todoItem.importance,
+                        deadline = todoItem.deadline ?: uiState.value.deadline,
+                        isDeadlineSet = todoItem.deadline != null,
                         isNewItem = false
                     )
                 }
@@ -94,10 +103,10 @@ class EditViewModel @Inject constructor(
             text = uiState.value.text,
             importance = uiState.value.importance,
             deadline = if (uiState.value.isDeadlineSet) uiState.value.deadline else null,
-            modificationDate =  if (!isNewItem) System.currentTimeMillis() else null
+            modificationDate = if (!isNewItem) System.currentTimeMillis() else null
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             if (isNewItem)
                 repository.addTodoItem(todoItem)
             else
@@ -108,7 +117,7 @@ class EditViewModel @Inject constructor(
 
     private fun removeTodoItem() {
         if (!isNewItem)
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch {
                 repository.removeItem(todoItem.id)
             }
     }

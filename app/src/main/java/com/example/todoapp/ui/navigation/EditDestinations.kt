@@ -14,8 +14,10 @@ fun NavGraphBuilder.editDestinations(
     composable<Destination.Edit> {
         val editViewModel: EditViewModel = hiltViewModel()
         val editUiState by editViewModel.uiState.collectAsStateWithLifecycle()
+        val editUiEvent by editViewModel.uiEvent.collectAsStateWithLifecycle(null)
         EditScreen(
             uiState = editUiState,
+            uiEvent = editUiEvent,
             onUiAction = editViewModel::onUiAction,
             navigateUp = onNavigateUp
         )
