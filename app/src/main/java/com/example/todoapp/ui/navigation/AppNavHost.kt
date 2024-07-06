@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 
+/** Composable function for setting up the main app's navigation graph. */
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,

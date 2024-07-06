@@ -6,6 +6,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Manages user preferences using DataStore. */
+
 private val Context.protoDataStore by dataStore("settings.json", PreferencesSerializer)
 
 @Singleton

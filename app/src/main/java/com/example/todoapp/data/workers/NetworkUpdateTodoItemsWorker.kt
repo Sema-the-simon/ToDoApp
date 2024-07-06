@@ -9,6 +9,7 @@ import com.example.todoapp.domain.Repository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
+/** Worker class for updating ToDoItems with network requests in the background. */
 
 @HiltWorker
 class NetworkUpdateTodoItemsWorker @AssistedInject constructor(

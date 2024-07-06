@@ -6,11 +6,7 @@ import com.example.todoapp.domain.model.TodoItem
 import java.io.IOException
 import kotlin.random.Random
 
-fun fakeNetworkOrDatabaseCall(id: String): TodoItem? {
-    if ((1..10).random() == 5)
-        throw IOException("Cant find item")
-    return getData().random().copy(id = id)
-}
+
 
 fun getData(n: Int = 15): MutableList<TodoItem> {
     val data = mutableListOf<TodoItem>()

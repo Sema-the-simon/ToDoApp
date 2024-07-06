@@ -38,6 +38,17 @@ import com.example.todoapp.ui.themes.White
 import com.example.todoapp.utils.getData
 import kotlinx.coroutines.launch
 
+/**
+ * `ListScreen` displays the user interface for viewing and interacting with a list of todo items.
+ *
+ * This screen includes:
+ * - **`[ListTopAppBar]`**: A top app bar with options for filtering tasks and showing the count of completed tasks.
+ * - **`[FloatingActionButton]`**: A button for adding new todo items.
+ * - **`[TodoList]`**: A scrollable list of todo items with options to interact with each item.
+ * - Pull-to-refresh functionality to reload the list of todo items.
+ * - Snackbar notifications for displaying error messages or other notifications.
+ **/
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(

@@ -2,6 +2,8 @@ package com.example.todoapp.domain.model
 
 import com.example.todoapp.R
 
+/** Various user errors with associated string resources. */
+
 sealed class UserError {
     data object Unexpected : UserError() {
         override fun toStringResource(): Int = R.string.unexpected_error

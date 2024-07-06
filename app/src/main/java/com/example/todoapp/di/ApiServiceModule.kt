@@ -1,6 +1,7 @@
 package com.example.todoapp.di
 
-import com.example.todoapp.data.network.AuthInterceptor
+import com.example.todoapp.data.network.interceptors.AuthInterceptor
+import com.example.todoapp.data.network.interceptors.ServerErrorGeneratorInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +16,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
+/** Hilt module for providing ApiService dependencies. */
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,7 +40,7 @@ interface ApiServiceModule {
                 }
                 install(Logging)
                 install(HttpRequestRetry) {
-                    retryOnServerErrors(maxRetries = 5)
+                    retryOnServerErrors(maxRetries = 3)
                     exponentialDelay()
                 }
             }
@@ -52,6 +55,7 @@ interface ApiServiceModule {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(AuthInterceptor())
+                .addInterceptor(ServerErrorGeneratorInterceptor())
                 .build()
         }
     }

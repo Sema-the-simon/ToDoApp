@@ -29,6 +29,19 @@ import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
 import kotlinx.coroutines.launch
 
+/**
+ * `EditScreen` displays the user interface for editing or creating a todo item.
+ *
+ * This screen includes:
+ * - **`[EditTopAppBar]`**:A top app bar for navigation and saving actions.
+ * - **`[EditTextField]`**:A text field for entering or editing the todo item text.
+ * - **`[EditImportanceField]`**:A field to set the importance level of the todo item.
+ * - **`[EditDeadlineField]`**:A deadline field with an option to set or edit the deadline.
+ * - **`[EditDeleteButton]`**:A delete button to remove the todo item.
+ * - Snackbar notifications for showing errors or messages.
+ * */
+
+
 @Composable
 fun EditScreen(
     uiState: EditUiState,
@@ -44,7 +57,6 @@ fun EditScreen(
             is EditUiEvent.ShowSnackbar -> launch {
                 snackbarHostState.showSnackbar(uiEvent.message)
             }
-
             null -> Unit
         }
     }

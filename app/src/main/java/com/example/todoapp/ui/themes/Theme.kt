@@ -28,6 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 
+/**
+ * Defines and provides theme-related functionalities for the TodoApp.
+ * It includes color schemes, typography styles, and previews for the theme components.
+ *
+ * - **`ExtendedTheme`**: Provides access to the extended colors and typography used in the theme.
+ * - **`TodoAppTheme`**: Composable function that sets up the theme based on the dark mode and dynamic color availability.
+ */
+
 
 object ExtendedTheme {
     val colors: ExtendedColors

@@ -16,6 +16,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * `ListViewModel` manages the UI state for the main ListScreen.
+ *
+ * Interacts with the repository and use cases to provide the UI with up-to-date data,
+ * handle user actions, and manage state.
+ *
+ * - **`uiState`**: StateFlow that emits the current UI state.
+ * - **`onUiAction`**: Handles different UI actions.
+ *
+ * `ListUiState`**: Data class representing the state of the UI.
+ */
+
 @HiltViewModel
 class ListViewModel @Inject constructor(
     private val repository: Repository,

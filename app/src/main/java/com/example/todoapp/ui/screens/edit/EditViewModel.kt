@@ -22,6 +22,17 @@ import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ * `EditViewModel` manages the UI state for EditScreen.
+ *
+ * It interacts with the repository and handles user actions to update the UI state accordingly.
+ *
+ * - **`uiState`**: StateFlow that emits the current UI state.
+ * - **`uiEvent`**: Flow of UI events used to communicate actions such as showing a snackbar for errors.*
+ * **`EditUiState`**: Data class representing the state of the UI.
+ */
+
+
 @HiltViewModel
 class EditViewModel @Inject constructor(
     private val repository: Repository,

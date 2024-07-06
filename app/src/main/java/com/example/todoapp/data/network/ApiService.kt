@@ -25,16 +25,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/** Service class for making network requests */
+
 private const val BASE_URL = "https://hive.mrdekk.ru/todo"
 private const val REVISION_HEADER = "X-Last-Known-Revision"
-private const val GENERATE_FAILS_HEADER = "X-Generate-Fails"
 
 class ApiService @Inject constructor(
     private val client: HttpClient,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : Api {
 
-    private suspend fun <T : ResponseBody> getResult(block: suspend CoroutineScope.() -> T): ResponseResult<T> =
+    private suspend fun <T : ResponseBody> wrapResult(block: suspend CoroutineScope.() -> T): ResponseResult<T> =
         withContext(ioDispatcher) {
             try {
                 val body: T = block()
@@ -61,13 +62,12 @@ class ApiService @Inject constructor(
     }
 
     override suspend fun getTodoList(): ResponseResult<ResponseBody.TodoList> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .get(BASE_URL) {
                     url {
                         appendPathSegments("list")
                     }
-                    //header(GENERATE_FAILS_HEADER, 70)
                     expectSuccess = true
                 }
             response.body()
@@ -78,7 +78,7 @@ class ApiService @Inject constructor(
         revision: Int,
         req: RequestBody.TodoList
     ): ResponseResult<ResponseBody.TodoList> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .patch(BASE_URL) {
                     url {
@@ -93,7 +93,7 @@ class ApiService @Inject constructor(
         }
 
     override suspend fun getItemById(revision: Int, id: String): ResponseResult<ResponseBody.TodoElement> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .get(BASE_URL) {
                     url {
@@ -108,7 +108,7 @@ class ApiService @Inject constructor(
         revision: Int,
         req: RequestBody.TodoElement
     ): ResponseResult<ResponseBody.TodoElement> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .post(BASE_URL) {
                     url {
@@ -126,7 +126,7 @@ class ApiService @Inject constructor(
         revision: Int,
         req: RequestBody.TodoElement
     ): ResponseResult<ResponseBody.TodoElement> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .put(BASE_URL) {
                     url {
@@ -141,7 +141,7 @@ class ApiService @Inject constructor(
         }
 
     override suspend fun deleteItem(revision: Int, id: String): ResponseResult<ResponseBody.TodoElement> =
-        getResult {
+        wrapResult {
             val response: HttpResponse = client
                 .delete(BASE_URL) {
                     url {

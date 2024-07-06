@@ -2,6 +2,8 @@ package com.example.todoapp.domain.model
 
 import com.example.todoapp.R
 
+/** Enum representing the importance levels of a [TodoItem]. */
+
 enum class Importance {
     LOW {
         override fun toStringResource(): Int = R.string.importance_low

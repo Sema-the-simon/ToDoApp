@@ -5,6 +5,8 @@ import com.example.todoapp.utils.toImportance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/** Data Transfer Object for a ToDoItem, used for network communication. */
+
 @Serializable
 data class TodoItemDto(
     @SerialName("id")
@@ -12,19 +14,19 @@ data class TodoItemDto(
     @SerialName("text")
     val text: String,
     @SerialName("importance")
-    val importance: String,         // importance = low | basic | important
+    val importance: String,
     @SerialName("deadline")
-    val deadline: Long? = null,     // int64, может отсутствовать, тогда нет
+    val deadline: Long? = null,
     @SerialName("done")
     val done: Boolean,
     @SerialName("color")
-    val color: String? = null,      // "#FFFFFF" может отсутствовать
+    val color: String? = null,
     @SerialName("created_at")
     val createdAt: Long,
     @SerialName("changed_at")
     val changedAt: Long,
     @SerialName("last_updated_by")
-    val lastUpdatedBy: String       //<device id>
+    val lastUpdatedBy: String
 )
 
 fun TodoItemDto.toTodoItem(): TodoItem {

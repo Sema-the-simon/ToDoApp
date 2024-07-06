@@ -3,13 +3,15 @@ package com.example.todoapp.di
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.work.WorkManager
-import com.example.todoapp.data.TodoItemsDataSource
+import com.example.todoapp.data.NetworkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+
+/** Hilt module for providing Worker dependencies. */
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -18,11 +20,11 @@ interface WorkerModule {
 
         @Singleton
         @Provides
-        fun provideDataSource(
+        fun provideNetworkManager(
             connectivityManager: ConnectivityManager,
             workManager: WorkManager
-        ): TodoItemsDataSource {
-            return TodoItemsDataSource(workManager, connectivityManager)
+        ): NetworkManager {
+            return NetworkManager(workManager, connectivityManager)
         }
 
 

@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.update
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/** Manages WorkManager tasks and network state. */
+
 private const val ONCE_UPDATE_WORKER_NAME = "OnceUpdateWorker"
 private const val TAG_UPDATE_TODO_ITEMS = "UpdateTodoItemsTag"
 
@@ -27,7 +29,7 @@ private const val REFRESH_RATE_HOURS = 8L
 private const val PERIODIC_UPDATE_WORKER_NAME = "PeriodicUpdateWorker"
 private const val TAG_PERIODIC_UPDATE_TODO_ITEMS = "PeriodicUpdateTodoItemsTag"
 
-class TodoItemsDataSource @Inject constructor(
+class NetworkManager @Inject constructor(
     private val workManager: WorkManager,
     private val connectivityManager: ConnectivityManager
 ) {
@@ -100,9 +102,5 @@ class TodoItemsDataSource @Inject constructor(
                 }
             }
         })
-    }
-
-    fun stopLoadPeriodically() {
-        workManager.cancelAllWorkByTag(TAG_UPDATE_TODO_ITEMS)
     }
 }

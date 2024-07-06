@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Use case for filtering list [TodoItem] based on filter state from [DataStoreManager]. */
+
 @Singleton
 class FilterListUseCase @Inject constructor(
     private val dataStoreManager: DataStoreManager

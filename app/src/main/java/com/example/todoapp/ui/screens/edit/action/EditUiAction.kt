@@ -2,6 +2,8 @@ package com.example.todoapp.ui.screens.edit.action
 
 import com.example.todoapp.domain.model.Importance
 
+/** Represent different UI actions for [EditScreen] that need to be handle. */
+
 sealed class EditUiAction {
     data object SaveTask: EditUiAction()
     data object DeleteTask : EditUiAction()
