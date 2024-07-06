@@ -2,17 +2,19 @@ package com.example.todoapp.data
 
 import android.util.Log
 import com.example.todoapp.data.datastore.DataStoreManager
-import com.example.todoapp.data.model.TodoItem
+
 import com.example.todoapp.data.network.Api
 import com.example.todoapp.data.network.model.RequestBody
 import com.example.todoapp.data.network.model.ResponseBody
-import com.example.todoapp.data.network.model.Result
+import com.example.todoapp.data.network.model.ResponseResult
 import com.example.todoapp.data.network.model.asDto
 import com.example.todoapp.data.network.model.handle
 import com.example.todoapp.data.network.model.toTodoItem
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.di.DefaultDispatcher
-import com.example.todoapp.utils.UserError
+import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.domain.model.UserError
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -95,7 +97,7 @@ class TodoItemsRepository @Inject constructor(
 
     override suspend fun countDoneTodos(): Int = todoItems.value.count { it.isDone }
 
-    private fun loggError(error: Result.Error) {
+    private fun loggError(error: ResponseResult.Error) {
         val code = if (error.errorCode != -1) "[${error.errorCode}]: " else ""
         val message = "$code${error.errorMessage}"
         Log.d("networkTEST", message)
@@ -157,7 +159,7 @@ class TodoItemsRepository @Inject constructor(
         }
     }
 
-    private val handleServerError: (error: Result.Error) -> Unit = { error ->
+    private val handleServerError: (error: ResponseResult.Error) -> Unit = { error ->
         loggError(error)
         errorMessage = when (error.errorCode) {
             HttpStatusCode.InternalServerError.value -> UserError.InternalServerError
