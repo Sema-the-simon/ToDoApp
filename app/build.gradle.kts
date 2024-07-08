@@ -93,7 +93,7 @@ dependencies {
     implementation(libs.androidx.datastore)
     //room
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
     androidTestImplementation(libs.androidx.junit)

@@ -1,6 +1,9 @@
 package com.example.todoapp.data
 
-import com.example.todoapp.data.datastore.DataStoreManager
+import com.example.todoapp.data.datastore.PreferencesManager
+import com.example.todoapp.data.db.TodoItemDao
+import com.example.todoapp.data.db.TodoItemInfoTuple
+import com.example.todoapp.data.db.entities.toEntity
 import com.example.todoapp.data.network.Api
 import com.example.todoapp.data.network.model.RequestBody
 import com.example.todoapp.data.network.model.ResponseResult
@@ -16,10 +19,14 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -32,18 +39,29 @@ import javax.inject.Inject
 
 class TodoItemsRepository @Inject constructor(
     private val api: Api,
+    private val todoItemDao: TodoItemDao,
     private val dataSource: NetworkManager,
-    private val dataStoreManager: DataStoreManager,
+    private val preferencesManager: PreferencesManager,
     @DefaultDispatcher
     private val defaultDispatcher: CoroutineDispatcher,
     @ApplicationScope
     private val externalScope: CoroutineScope,
 ) : Repository {
     private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
-    override val todoItems = _todoItems.asStateFlow()
+    override val todoItems = todoItemDao.getAllTodoData().mapToTodoItemFlow()
+        .stateIn(
+            scope = externalScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
+    private fun Flow<List<TodoItemInfoTuple>>.mapToTodoItemFlow() =
+        this.map { list -> list.map { it.toTodoItem() } }
+
 
     private val _dataState: MutableStateFlow<Repository.DataState> =
         MutableStateFlow(Repository.DataState())
+
     override val dataState: StateFlow<Repository.DataState> = _dataState.asStateFlow()
 
     private var isDataLoading: Boolean
@@ -72,7 +90,7 @@ class TodoItemsRepository @Inject constructor(
     private var userId = ""
 
     private fun getUserId() = externalScope.launch {
-        dataStoreManager.userPreferences.collectLatest { pref ->
+        preferencesManager.userPreferences.collectLatest { pref ->
             userId = pref.userId
         }
     }
@@ -140,6 +158,7 @@ class TodoItemsRepository @Inject constructor(
                     _todoItems.update {
                         todoItems.value.toMutableList().apply { mergeWith(newElements) }
                     }
+                    //todoItemDao.replaceAllTodoItems(newElements.map { it.toEntity() })
                     revision = data.revision
                     isDataLoading = false
                     isDataSynchronized = true
@@ -167,6 +186,7 @@ class TodoItemsRepository @Inject constructor(
             updatedList.add(todoItem)
             updatedList.toList()
         }
+        todoItemDao.insertNewTodoItemData(todoItem.toEntity())
         synchronizedNetworkRun {
             val result = api.addItem(revision, createElementRequest(todoItem))
 

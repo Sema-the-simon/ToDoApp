@@ -11,7 +11,8 @@ import javax.inject.Singleton
 private val Context.protoDataStore by dataStore("settings.json", PreferencesSerializer)
 
 @Singleton
-class DataStoreManager @Inject constructor(@ApplicationContext appContext: Context) {
+class PreferencesManager @Inject constructor(@ApplicationContext appContext: Context) {
+
     private val preferencesDataStore = appContext.protoDataStore
     val userPreferences = preferencesDataStore.data
 
