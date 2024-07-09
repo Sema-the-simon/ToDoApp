@@ -38,17 +38,18 @@ import javax.inject.Inject
  *  Work with remote and local data source - TODO(local data source not implemented yet) */
 
 class TodoItemsRepository @Inject constructor(
+    networkManager: NetworkManager,
     private val api: Api,
     private val todoItemDao: TodoItemDao,
-    private val dataSource: NetworkManager,
     private val preferencesManager: PreferencesManager,
     @DefaultDispatcher
     private val defaultDispatcher: CoroutineDispatcher,
     @ApplicationScope
     private val externalScope: CoroutineScope,
 ) : Repository {
-    private val _todoItems: MutableStateFlow<List<TodoItem>> = MutableStateFlow(emptyList())
-    override val todoItems = todoItemDao.getAllTodoData().mapToTodoItemFlow()
+    private val databaseData: Flow<List<TodoItemInfoTuple>> = todoItemDao.observeTodoData()
+
+    override val todoItems = databaseData.mapToTodoItemFlow()
         .stateIn(
             scope = externalScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -56,7 +57,7 @@ class TodoItemsRepository @Inject constructor(
         )
 
     private fun Flow<List<TodoItemInfoTuple>>.mapToTodoItemFlow() =
-        this.map { list -> list.map { it.toTodoItem() } }
+        this.map { list -> list.filter { !it.isDeleted }.map { it.toTodoItem() } }
 
 
     private val _dataState: MutableStateFlow<Repository.DataState> =
@@ -82,7 +83,7 @@ class TodoItemsRepository @Inject constructor(
             _dataState.update { it.copy(errorMessage = value) }
         }
 
-    private val isNetworkAvailable = dataSource.internetConnectionState
+    private val isNetworkAvailable = networkManager.internetConnectionState
 
     private val revisionMutex = Mutex()
     private var revision = 0
@@ -97,8 +98,8 @@ class TodoItemsRepository @Inject constructor(
 
     init {
         getUserId()
-        dataSource.loadTodoItemsOnce()
-        dataSource.loadTodoItemsPeriodically()
+        networkManager.loadTodoItemsOnce()
+        networkManager.loadTodoItemsPeriodically()
     }
 
     override suspend fun countDoneTodos(): Int = todoItems.value.count { it.isDone }
@@ -138,16 +139,6 @@ class TodoItemsRepository @Inject constructor(
     private fun createListRequest(list: List<TodoItem>): RequestBody.TodoList =
         RequestBody.TodoList(list.map { it.asDto(userId) })
 
-    private fun MutableList<TodoItem>.mergeWith(list: List<TodoItem>) {
-        val setIds = this.map { it.id }.toHashSet()
-        list.forEach { el ->
-            if (el.id in setIds)
-                this.map { if (it.id == el.id) el else it }
-            else
-                this.add(el)
-        }
-    }
-
     override suspend fun loadTodoItems() = withContext(defaultDispatcher) {
         isDataLoading = true
         synchronizedNetworkRun {
@@ -155,19 +146,40 @@ class TodoItemsRepository @Inject constructor(
             result.handle(
                 onSuccess = { data ->
                     val newElements = data.list.map { it.toTodoItem() }
-                    _todoItems.update {
-                        todoItems.value.toMutableList().apply { mergeWith(newElements) }
-                    }
-                    //todoItemDao.replaceAllTodoItems(newElements.map { it.toEntity() })
                     revision = data.revision
+                    updateTodoItemsInDataBase(newElements)
                     isDataLoading = false
-                    isDataSynchronized = true
-
                     syncWithServer()
+                    isDataSynchronized = true
                 },
                 onError = handleServerError,
             )
         }
+    }
+
+    private suspend fun updateTodoItemsInDataBase(newItems: List<TodoItem>) {
+        val currentItems = hashMapOf<String, TodoItemInfoTuple>()
+        todoItemDao.getAllTodoData().forEach { el ->
+            currentItems[el.id] = el
+        }
+        for (newEl in newItems) {
+            if (newEl.id in currentItems.keys) {
+                val curEl = currentItems[newEl.id]!!
+                if (curEl.isDeleted) {
+                    todoItemDao.deleteTodoDataById(curEl.id)
+                    //currentItems.remove(newEl.id)
+                    continue
+                }
+                val serverModification = newEl.modificationDate ?: 0L
+                val databaseModification = curEl.changedAt
+                if (newEl != currentItems[newEl.id]!!.toTodoItem() && serverModification >= databaseModification) {
+                    todoItemDao.updateTodoData(newEl.toEntity())
+                } else
+                    continue
+            } else (newEl.id !in currentItems.keys)
+            todoItemDao.insertNewTodoItemData(newEl.toEntity())
+        }
+        todoItemDao.clearDeleted()
     }
 
     private suspend fun syncWithServer() {
@@ -181,11 +193,6 @@ class TodoItemsRepository @Inject constructor(
     }
 
     override suspend fun addTodoItem(todoItem: TodoItem) = withContext(defaultDispatcher) {
-        _todoItems.update {
-            val updatedList = todoItems.value.toMutableList()
-            updatedList.add(todoItem)
-            updatedList.toList()
-        }
         todoItemDao.insertNewTodoItemData(todoItem.toEntity())
         synchronizedNetworkRun {
             val result = api.addItem(revision, createElementRequest(todoItem))
@@ -198,45 +205,36 @@ class TodoItemsRepository @Inject constructor(
     }
 
     override suspend fun updateItem(todoItem: TodoItem) = withContext(defaultDispatcher) {
-        val containsTodoItem = _todoItems.value.any { it.id == todoItem.id }
-        if (containsTodoItem) {
-            _todoItems.update { currentList ->
-                currentList.map {
-                    when (it.id) {
-                        todoItem.id -> todoItem
-                        else -> it
-                    }
-                }
-            }
-            synchronizedNetworkRun {
-                val result = api.editItem(revision, createElementRequest(todoItem))
+        todoItemDao.updateTodoData(
+            todoItem.copy(modificationDate = System.currentTimeMillis()).toEntity()
+        )
+        synchronizedNetworkRun {
+            val result = api.editItem(revision, createElementRequest(todoItem))
 
-                result.handle(
-                    onSuccess = { data -> revision = data.revision },
-                    onError = handleServerError,
-                )
-            }
+            result.handle(
+                onSuccess = { data -> revision = data.revision },
+                onError = handleServerError,
+            )
         }
     }
 
     override suspend fun removeItem(id: String) = withContext(defaultDispatcher) {
-        val containsTodoItem = _todoItems.value.any { it.id == id }
-        if (containsTodoItem) {
-            _todoItems.update { currentList ->
-                currentList.filter { it.id != id }
-            }
-            synchronizedNetworkRun {
-                val result = api.deleteItem(revision, id)
-                result.handle(
-                    onSuccess = { data -> revision = data.revision },
-                    onError = handleServerError,
-                )
-            }
+        val item = getTodoItem(id)!!
+        todoItemDao.updateTodoData(item.toEntity(isDeleted = true))
+        synchronizedNetworkRun {
+            val result = api.deleteItem(revision, id)
+            result.handle(
+                onSuccess = { data ->
+                    revision = data.revision
+                    todoItemDao.deleteTodoDataById(id)
+                },
+                onError = handleServerError,
+            )
         }
     }
 
     override suspend fun getTodoItem(id: String): TodoItem? = withContext(defaultDispatcher) {
-        _todoItems.value.firstOrNull { it.id == id }
+        todoItems.value.firstOrNull { it.id == id }
     }
 
     override suspend fun clearErrorMessage() {

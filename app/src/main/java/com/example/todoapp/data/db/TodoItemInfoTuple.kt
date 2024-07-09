@@ -11,7 +11,8 @@ data class TodoItemInfoTuple(
     var deadline: Long?,
     var done: Boolean,
     val createdAt: Long,
-    var changedAt: Long
+    var changedAt: Long,
+    var isDeleted: Boolean
 ) {
 
     fun toTodoItem(): TodoItem = TodoItem(

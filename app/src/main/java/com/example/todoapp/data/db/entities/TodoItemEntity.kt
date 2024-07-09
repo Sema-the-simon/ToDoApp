@@ -26,10 +26,11 @@ data class TodoItemEntity(
     var deadline: Long?,
     var done: Boolean,
     val createdAt: Long,
-    var changedAt: Long?
+    var changedAt: Long?,
+    var isDeleted: Boolean,
 )
 
-fun TodoItem.toEntity(): TodoItemEntity =
+fun TodoItem.toEntity(isDeleted: Boolean = false): TodoItemEntity =
     TodoItemEntity(
         id = this.id,
         importanceId = this.importance.getImportanceId(),
@@ -37,5 +38,6 @@ fun TodoItem.toEntity(): TodoItemEntity =
         deadline = this.deadline,
         done = this.isDone,
         createdAt = this.creationDate,
-        changedAt = this.modificationDate
+        changedAt = this.modificationDate,
+        isDeleted = isDeleted
     )
