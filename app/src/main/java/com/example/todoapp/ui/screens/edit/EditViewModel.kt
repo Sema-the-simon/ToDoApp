@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.example.todoapp.data.Repository
-import com.example.todoapp.data.model.Importance
-import com.example.todoapp.data.model.TodoItem
+import com.example.todoapp.domain.Repository
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ui.navigation.Destination
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.screens.edit.action.EditUiEvent
@@ -21,6 +21,17 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+
+/**
+ * `EditViewModel` manages the UI state for EditScreen.
+ *
+ * It interacts with the repository and handles user actions to update the UI state accordingly.
+ *
+ * - **`uiState`**: StateFlow that emits the current UI state.
+ * - **`uiEvent`**: Flow of UI events used to communicate actions such as showing a snackbar for errors.*
+ * **`EditUiState`**: Data class representing the state of the UI.
+ */
+
 
 @HiltViewModel
 class EditViewModel @Inject constructor(

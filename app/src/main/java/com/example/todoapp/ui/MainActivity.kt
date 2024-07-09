@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.todoapp.ui
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -12,6 +12,9 @@ import com.example.todoapp.ui.navigation.AppNavHost
 import com.example.todoapp.ui.themes.TodoAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Main activity of app that sets up the Compose UI with navigation and theming.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

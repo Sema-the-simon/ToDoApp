@@ -7,6 +7,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+/**
+ * Defines extended typography styles for the application, including various text styles.
+ * Provides a `staticCompositionLocalOf` to enable the usage of these styles within the Compose UI.
+ */
+
 @Immutable
 data class ExtendedTypography(
     val largeTitle: TextStyle = TextStyle(),

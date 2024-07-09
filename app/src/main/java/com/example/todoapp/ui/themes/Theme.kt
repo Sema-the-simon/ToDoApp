@@ -28,6 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 
+/**
+ * Defines and provides theme-related functionalities for the TodoApp.
+ * It includes color schemes, typography styles, and previews for the theme components.
+ *
+ * - **`ExtendedTheme`**: Provides access to the extended colors and typography used in the theme.
+ * - **`TodoAppTheme`**: Composable function that sets up the theme based on the dark mode and dynamic color availability.
+ */
+
 
 object ExtendedTheme {
     val colors: ExtendedColors
@@ -121,7 +129,8 @@ fun ColorPalettePreview(
             HorizontalDivider(
                 Modifier
                     .width(250.dp)
-                    .padding(8.dp))
+                    .padding(8.dp)
+            )
             Row {
                 BoxColorPreview("Support / Separator", ExtendedTheme.colors.supportSeparator)
                 BoxColorPreview("Support / Overlay", ExtendedTheme.colors.supportOverlay)
@@ -133,8 +142,14 @@ fun ColorPalettePreview(
             }
             Row {
                 BoxColorPreview(text = "Label / Primary", color = ExtendedTheme.colors.labelPrimary)
-                BoxColorPreview(text = "Label / Secondary", color = ExtendedTheme.colors.labelSecondary)
-                BoxColorPreview(text = "Label / Tertiary", color = ExtendedTheme.colors.labelTertiary)
+                BoxColorPreview(
+                    text = "Label / Secondary",
+                    color = ExtendedTheme.colors.labelSecondary
+                )
+                BoxColorPreview(
+                    text = "Label / Tertiary",
+                    color = ExtendedTheme.colors.labelTertiary
+                )
                 BoxColorPreview(text = "Label / Disable", color = ExtendedTheme.colors.labelDisable)
             }
             Row {
@@ -148,7 +163,6 @@ fun ColorPalettePreview(
                 BoxColorPreview(text = "Color / White", color = White)
             }
         }
-
     }
 }
 

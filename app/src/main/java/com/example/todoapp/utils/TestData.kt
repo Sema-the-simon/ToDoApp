@@ -1,18 +1,12 @@
 package com.example.todoapp.utils
 
 import android.icu.util.Calendar
-import com.example.todoapp.data.model.Importance
-import com.example.todoapp.data.model.TodoItem
-import java.io.IOException
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import kotlin.random.Random
 
-fun fakeNetworkOrDatabaseCall(id: String): TodoItem? {
-    if ((1..10).random() == 5)
-        throw IOException("Cant find item")
-    return getData().random().copy(id = id)
-}
 
-fun getData(): MutableList<TodoItem> {
+fun getData(n: Int = 15): MutableList<TodoItem> {
     val data = mutableListOf<TodoItem>()
     val texts = listOf(
         "Купить что-то",
@@ -96,7 +90,7 @@ fun getData(): MutableList<TodoItem> {
         )
     )
 
-    for (i in 7..15) {
+    for (i in 7..n) {
         data.add(
             TodoItem(
                 id = i.toString(),

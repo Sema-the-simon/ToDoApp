@@ -1,7 +1,6 @@
 package com.example.todoapp.ui.screens.list
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -11,7 +10,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,9 +22,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.ui.screens.list.action.ListUiAction
@@ -36,6 +38,17 @@ import com.example.todoapp.ui.themes.White
 import com.example.todoapp.utils.getData
 import kotlinx.coroutines.launch
 
+/**
+ * `ListScreen` displays the user interface for viewing and interacting with a list of todo items.
+ *
+ * This screen includes:
+ * - **`[ListTopAppBar]`**: A top app bar with options for filtering tasks and showing the count of completed tasks.
+ * - **`[FloatingActionButton]`**: A button for adding new todo items.
+ * - **`[TodoList]`**: A scrollable list of todo items with options to interact with each item.
+ * - Pull-to-refresh functionality to reload the list of todo items.
+ * - Snackbar notifications for displaying error messages or other notifications.
+ **/
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
@@ -43,12 +56,12 @@ fun ListScreen(
     onUiAction: (ListUiAction) -> Unit,
     navigateToEditItem: (String?) -> Unit
 ) {
+
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val listState = rememberLazyListState()
-
-    val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
     var needToScroll by remember { mutableStateOf(false) }
+    val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
 
     LaunchedEffect(needToScroll && !isTopScroll) {
         launch {
@@ -56,8 +69,22 @@ fun ListScreen(
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            launch {
+                snackbarHostState.showSnackbar(context.getString(uiState.errorMessage.toStringResource()))
+                onUiAction(ListUiAction.ClearErrorMessage)
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             ListTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -83,23 +110,22 @@ fun ListScreen(
         },
         containerColor = ExtendedTheme.colors.backPrimary,
     ) { paddingValues ->
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+        PullToRefreshBox(
+            modifier = Modifier.padding(paddingValues),
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = { onUiAction(ListUiAction.RefreshList) }
         ) {
             TodoList(
                 listState = listState,
                 todoList = uiState.todoItems,
+                isDataSynchronized = uiState.isDataSynchronized,
+                onAction = onUiAction,
                 onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
-                onDelete = { todoItem -> onUiAction(ListUiAction.RemoveTodoItem(todoItem.id)) },
-                onUpdate = { todoItem -> onUiAction(ListUiAction.UpdateTodoItem(todoItem.id)) }
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
     }
-
-
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
@@ -108,6 +134,6 @@ fun PreviewListScreen(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {
-        ListScreen(ListUiState(getData(), 1), {}, {})
+        ListScreen(ListUiState(getData().take(2), 1), {}, {})
     }
 }

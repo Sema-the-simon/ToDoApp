@@ -4,6 +4,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Defines color values and provides a structured way to manage color schemes for the TodoApp.
+ * Includes light and dark color palettes and an `ExtendedColors` data class to encapsulate them.
+*/
+
+
 val Red = Color(0xFFFF3B30)
 val Green = Color(0xFF34C759)
 val Blue = Color(0xFF007AFF)

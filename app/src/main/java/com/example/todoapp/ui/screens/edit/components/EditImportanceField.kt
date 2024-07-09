@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
-import com.example.todoapp.data.model.Importance
+import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Red

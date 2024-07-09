@@ -1,4 +1,6 @@
-package com.example.todoapp.data.model
+package com.example.todoapp.domain.model
+
+/** Representing a main model class for TodoItem. */
 
 data class TodoItem(
     val id: String,

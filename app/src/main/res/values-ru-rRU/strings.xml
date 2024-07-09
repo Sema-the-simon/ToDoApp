@@ -15,4 +15,11 @@
     <string name="deadline_calendar_cancel">Отмена</string>
     <string name="delete_title">Удалить</string>
     <string name="add_new_task_text_field">Новое</string>
+    <string name="unsync_data_warning">Данные не синхронизованы</string>
+    <string name="error_500">Ошибка сервера</string>
+    <string name="error_400">Не удалось синхронизировать данные</string>
+    <string name="error_401">Не удалось авторизироваться</string>
+    <string name="error_404">Такого элемента не существует, попробуйте синхронизировать данные</string>
+    <string name="no_internet_connection">Нет подключения к интернету</string>
+    <string name="unexpected_error">Что-то пошло не так</string>
 </resources>
