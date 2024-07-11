@@ -3,7 +3,6 @@ package com.example.todoapp.data
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -12,7 +11,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
+import androidx.work.WorkRequest
 import com.example.todoapp.data.workers.NetworkUpdateTodoItemsWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +56,7 @@ class NetworkManager @Inject constructor(
             .setConstraints(networkConstraints)
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .addTag(TAG_UPDATE_TODO_ITEMS)
@@ -87,7 +86,6 @@ class NetworkManager @Inject constructor(
         connectivityManager.registerDefaultNetworkCallback(object :
             ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                Log.d("networkTEST", "avaliable")
                 _internetConnectionState.update {
                     true
                 }
@@ -95,8 +93,6 @@ class NetworkManager @Inject constructor(
             }
 
             override fun onLost(network: Network) {
-                Log.d("networkTEST", "lost")
-
                 _internetConnectionState.update {
                     false
                 }
