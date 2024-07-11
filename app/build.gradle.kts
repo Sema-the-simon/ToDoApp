@@ -20,6 +20,11 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
 }
 
 dependencies {
