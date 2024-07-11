@@ -9,7 +9,7 @@ enum class TokenType {
     OAuth
 }
 
-private val TOKEN :String? = null
+private val TOKEN :String? = null// place your token here
 private val TYPE: String = TokenType.OAuth.name
 
 /** Intercepts HTTP requests to add an authorization header with a token. */
