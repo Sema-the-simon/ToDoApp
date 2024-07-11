@@ -38,7 +38,7 @@ abstract class TelegramReporterTask @Inject constructor(
         val token = token.get()
         val chatId = chatId.get()
         val size = try {
-            apkSize.get().asFile.readText()
+            apkSize.get().asFile.readText() + " Mb"
         } catch (e: Exception) {
             "unspecified"
         }

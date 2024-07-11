@@ -1,5 +1,6 @@
 package helpers
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import java.io.File
 
 fun BaseAppModuleExtension.baseAndroidConfig() {
     namespace = AndroidConst.NAMESPACE
@@ -27,3 +28,7 @@ fun BaseAppModuleExtension.baseAndroidConfig() {
         jvmTarget = AndroidConst.KOTLIN_JVM_TARGET
     }
 }
+
+fun File.sizeBytes() = if (!exists()) 0.0 else length().toDouble()
+fun File.sizeKb() = sizeBytes() / 1024
+fun File.sizeMb() = sizeKb() / 1024
