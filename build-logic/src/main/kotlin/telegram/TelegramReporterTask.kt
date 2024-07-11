@@ -1,9 +1,12 @@
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import javax.inject.Inject
@@ -14,8 +17,9 @@ abstract class TelegramReporterTask @Inject constructor(
     @get:InputDirectory
     abstract val apkDir: DirectoryProperty
 
-    @get:Input
-    abstract val apkSize: Property<String>
+    @get:InputFile
+    @get:Optional
+    abstract val apkSize: RegularFileProperty
 
     @get:Input
     abstract val variantName: Property<String>
@@ -33,6 +37,11 @@ abstract class TelegramReporterTask @Inject constructor(
     fun report() {
         val token = token.get()
         val chatId = chatId.get()
+        val size = try {
+            apkSize.get().asFile.readText()
+        } catch (e: Exception) {
+            "unspecified"
+        }
         apkDir.get().asFile.listFiles()
             ?.filter { it.name.endsWith(".apk") }
             ?.forEach {
@@ -42,12 +51,13 @@ abstract class TelegramReporterTask @Inject constructor(
                 it.renameTo(nFile)
 
                 runBlocking {
-                    telegramApi.sendMessage("Build finished. Apk size - ${apkSize.get()}", token, chatId).apply {
-                        println("Status = $status")
-                    }
+                    telegramApi.sendMessage("Build finished. Apk size - $size", token, chatId)
+                        .apply {
+                            println("Status = $status")
+                        }
                 }
                 runBlocking {
-                    telegramApi.upload(it, token, chatId).apply {
+                    telegramApi.upload(nFile, token, chatId).apply {
                         println("Status = $status")
                     }
                 }
