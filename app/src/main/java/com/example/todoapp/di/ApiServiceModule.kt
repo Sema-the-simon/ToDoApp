@@ -1,6 +1,6 @@
 package com.example.todoapp.di
 
-import com.example.todoapp.data.network.interceptors.AuthInterceptor
+import com.example.todoapp.data.network.interceptors.ServerAuthInterceptor
 import com.example.todoapp.data.network.interceptors.ServerErrorGeneratorInterceptor
 import dagger.Module
 import dagger.Provides
@@ -54,7 +54,7 @@ interface ApiServiceModule {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(AuthInterceptor())
+                .addInterceptor(ServerAuthInterceptor())
                 .addInterceptor(ServerErrorGeneratorInterceptor())
                 .build()
         }
