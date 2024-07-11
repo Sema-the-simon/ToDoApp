@@ -6,8 +6,10 @@ plugins {
 }
 
 tgReporter {
-    token.set(providers.environmentVariable("TG_TOKEN"))
-    chatId.set(providers.environmentVariable("TG_CHAT"))
+    checkSize = true
+    setSizeLimitMB = 5 * 1024 * 1024
+    token = providers.environmentVariable("TG_TOKEN")
+    chatId = providers.environmentVariable("TG_CHAT")
 }
 
 android {
