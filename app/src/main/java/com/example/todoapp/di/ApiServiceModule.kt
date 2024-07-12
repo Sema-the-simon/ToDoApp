@@ -1,7 +1,10 @@
 package com.example.todoapp.di
 
+import com.example.todoapp.data.network.Api
+import com.example.todoapp.data.network.ApiService
 import com.example.todoapp.data.network.interceptors.ServerAuthInterceptor
 import com.example.todoapp.data.network.interceptors.ServerErrorGeneratorInterceptor
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +25,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface ApiServiceModule {
+
+    @Singleton
+    @Binds
+    fun provideApi(api: ApiService): Api
 
     companion object {
         @Singleton
