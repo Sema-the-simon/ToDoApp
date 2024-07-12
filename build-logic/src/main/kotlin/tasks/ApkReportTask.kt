@@ -51,13 +51,14 @@ abstract class ApkReportTask @Inject constructor(
                 val sizeBytes = entry.size
                 val sizeKb = sizeBytes / 1024.0
                 val sizeMb = sizeKb / 1024.0
-                val size = if ("%.2f".format(sizeMb) == "0,00")
-                    if (sizeKb < 0.1)
-                        "%.2f".format(sizeBytes.toDouble()) + " Byte"
-                    else
-                        "%.2f".format(sizeKb) + " KB"
-                else
-                    "%.2f".format(sizeMb) + " MB"
+                val size =
+                    if (sizeMb < 1) {
+                        if (sizeKb < 1)
+                            "%.2f".format(sizeBytes.toDouble()) + " Byte"
+                        else
+                            "%.2f".format(sizeKb) + " KB"
+                    } else
+                        "%.2f".format(sizeMb) + " MB"
                 report.append("- ${entry.name} $size\n")
             }
         }
