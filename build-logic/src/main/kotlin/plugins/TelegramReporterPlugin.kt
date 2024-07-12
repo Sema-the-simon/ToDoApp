@@ -3,7 +3,6 @@ package plugins
 import api.TelegramApi
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.internal.tasks.factory.dependsOn
 import gradle.kotlin.dsl.accessors._ece9ecfc410f73c47b8fc5a50c6254ee.android
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -50,6 +49,17 @@ class TelegramReporterPlugin : Plugin<Project> {
                         }
                     } else null
 
+            val apkReportTask = project.tasks.register<ApkReportTask>(
+                "sendApkStatisticFor${variant.name.capitalized()}",
+                telegramApi
+            ).apply {
+                configure {
+                    apkDir.set(artifacts)
+                    token.set(extension.token)
+                    chatId.set(extension.chatId)
+                }
+            }
+
             val reportTgTask = project.tasks.register<TelegramReporterTask>(
                 "reportTelegramApkFor${variant.name.capitalized()}",
                 telegramApi
@@ -65,20 +75,10 @@ class TelegramReporterPlugin : Plugin<Project> {
                     )
                     token.set(extension.token)
                     chatId.set(extension.chatId)
+                    finalizedBy(apkReportTask)
                 }
             }
 
-            val apkReportTask = project.tasks.register<ApkReportTask>(
-                "sendApkStatisticFor${variant.name.capitalized()}",
-                telegramApi
-            ).apply {
-                configure {
-                    apkDir.set(artifacts)
-                    token.set(extension.token)
-                    chatId.set(extension.chatId)
-                }
-                dependsOn(reportTgTask)
-            }
         }
     }
 }
