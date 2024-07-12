@@ -1,3 +1,6 @@
+package tasks
+
+import api.TelegramApi
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty

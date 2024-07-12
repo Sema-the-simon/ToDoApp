@@ -1,7 +1,6 @@
-package telegram
+package plugins
 
-import TelegramApi
-import TelegramReporterTask
+import api.TelegramApi
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.internal.tasks.factory.dependsOn
@@ -15,7 +14,9 @@ import org.gradle.api.provider.Property
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
-import validation.ValidateApkSizeTask
+import tasks.ApkReportTask
+import tasks.TelegramReporterTask
+import tasks.ValidateApkSizeTask
 import java.io.File
 
 class TelegramReporterPlugin : Plugin<Project> {
@@ -31,6 +32,8 @@ class TelegramReporterPlugin : Plugin<Project> {
         androidComponents.onVariants { variant ->
             val artifacts = variant.artifacts.get(SingleArtifact.APK)
 
+
+            val buildDir = "${project.layout.buildDirectory.get()}/apkStatistic"
             val sizeCheckEnabled = extension.checkSize.get()
             val validationTask =
                 if (sizeCheckEnabled)
@@ -43,11 +46,11 @@ class TelegramReporterPlugin : Plugin<Project> {
                             sizeN.set(extension.setSizeLimitMB)
                             token.set(extension.token)
                             chatId.set(extension.chatId)
-                            sizeFile.set(File("build/apkFileSize.txt"))
+                            sizeFile.set(File("$buildDir/apkFileSize.txt"))
                         }
                     } else null
 
-            val reportTask = project.tasks.register<TelegramReporterTask>(
+            val reportTgTask = project.tasks.register<TelegramReporterTask>(
                 "reportTelegramApkFor${variant.name.capitalized()}",
                 telegramApi
             ).apply {
@@ -64,7 +67,18 @@ class TelegramReporterPlugin : Plugin<Project> {
                     chatId.set(extension.chatId)
                 }
             }
-            reportTask.dependsOn(validationTask)
+
+            val apkReportTask = project.tasks.register<ApkReportTask>(
+                "sendApkStatisticFor${variant.name.capitalized()}",
+                telegramApi
+            ).apply {
+                configure {
+                    apkDir.set(artifacts)
+                    token.set(extension.token)
+                    chatId.set(extension.chatId)
+                }
+                dependsOn(reportTgTask)
+            }
         }
     }
 }
@@ -72,6 +86,7 @@ class TelegramReporterPlugin : Plugin<Project> {
 interface TelegramExtension {
     val checkSize: Property<Boolean>
     val setSizeLimitMB: Property<Int>
+    val sendReport: Property<Boolean>
     val chatId: Property<String>
     val token: Property<String>
 }

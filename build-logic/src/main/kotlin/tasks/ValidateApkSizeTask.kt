@@ -1,6 +1,7 @@
-package validation
+package tasks
 
-import TelegramApi
+import api.TelegramApi
+import helpers.format
 import helpers.sizeMb
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
@@ -53,7 +54,7 @@ abstract class ValidateApkSizeTask @Inject constructor(
                             }
                     }
                 }
-                sizeFile.asFile.get().writeText(it.sizeMb().toString())
+                sizeFile.asFile.get().writeText(it.sizeMb().format(2))
             }
     }
 }

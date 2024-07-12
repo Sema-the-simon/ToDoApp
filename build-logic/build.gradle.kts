@@ -16,7 +16,7 @@ gradlePlugin {
         }
         register("telegram-reporter") {
             id = "telegram-reporter"
-            implementationClass = "telegram.TelegramReporterPlugin"
+            implementationClass = "plugins.TelegramReporterPlugin"
         }
     }
 }
@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.compose.gradle.plugin)
     implementation(libs.ksp.gradle.plugin)
+    implementation(libs.kotlin.serialization.gradle.plugin)
 
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.ktor.client.core)

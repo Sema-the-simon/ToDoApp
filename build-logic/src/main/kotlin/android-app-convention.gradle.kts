@@ -8,10 +8,16 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization")
 }
 
 configure<BaseAppModuleExtension> {
     baseAndroidConfig()
+    defaultConfig {
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
+    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -46,6 +52,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    //serializable
+    implementation(libs.kotlinx.serialization.json)
     //datastore
     implementation(libs.androidx.datastore)
     //ktor
@@ -55,7 +63,6 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.slf4j.android)
-
     //room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
