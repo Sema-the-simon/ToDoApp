@@ -20,11 +20,13 @@
     <string name="error_401">Wrong autorization token</string>
     <string name="error_404">Element doesn\'t exist, try sync data</string>
     <string name="no_internet_connection">No Internet Connection</string>
-    <string name="unexpected_error" >Something went wrong</string>
+    <string name="unexpected_error">Something went wrong</string>
     <string name="system_theme_light">Always light</string>
     <string name="system_theme_dark">Always dark</string>
     <string name="system_theme_system">Match system</string>
     <string name="settings_close_button">Close settings window</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_title">Settings</string>
+    <string name="importance_close_button">Close importance menu</string>
+    <string name="importance_save_button">Change importance</string>
 </resources>

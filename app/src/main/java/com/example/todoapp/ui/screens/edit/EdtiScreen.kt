@@ -111,7 +111,7 @@ fun EditScreen(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
 @Composable
-fun PreviewListScreen(
+fun PreviewEditScreen(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {

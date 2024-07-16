@@ -138,7 +138,7 @@ class EditViewModel @Inject constructor(
 data class EditUiState(
     val text: String = "",
     val importance: Importance = Importance.BASIC,
-    val deadline: Long = System.currentTimeMillis(),
+    val deadline: Long? = null,
     val isDeadlineSet: Boolean = false,
     val isNewItem: Boolean = true,
     val isDialogVisible: Boolean = false

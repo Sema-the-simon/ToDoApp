@@ -44,7 +44,7 @@ import com.example.todoapp.utils.formatLongToDatePattern
 
 @Composable
 fun EditDeadlineField(
-    deadline: Long,
+    deadline: Long?,
     isDeadlineSet: Boolean,
     isDialogOpen: Boolean,
     uiAction: (EditUiAction) -> Unit
@@ -57,9 +57,13 @@ fun EditDeadlineField(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val dateText = remember(deadline) { formatLongToDatePattern(deadline) }
+        val dateText = remember(deadline) {
+            if (deadline != null) {
+                formatLongToDatePattern(deadline)
+            } else ""
+        }
         Column(
-            if (isDeadlineSet)
+            if (deadline != null)
                 Modifier.clickable {
                     uiAction(EditUiAction.UpdateDialogVisibility(true))
                 }
@@ -71,7 +75,7 @@ fun EditDeadlineField(
                 modifier = Modifier.padding(start = 5.dp),
                 color = ExtendedTheme.colors.labelPrimary
             )
-            AnimatedVisibility(visible = isDeadlineSet) {
+            AnimatedVisibility(visible = deadline != null) {
                 Box(modifier = Modifier.padding(5.dp)) {
                     Text(text = dateText, color = Blue)
                 }
@@ -80,11 +84,10 @@ fun EditDeadlineField(
         Switch(
             checked = isDeadlineSet,
             onCheckedChange = { checked ->
-                if (checked) {
+                if (checked && deadline == null) {
                     uiAction(EditUiAction.UpdateDialogVisibility(true))
-                } else {
-                    uiAction(EditUiAction.UpdateDeadlineSet(false))
                 }
+                uiAction(EditUiAction.UpdateDeadlineSet(checked))
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Blue,
@@ -107,12 +110,13 @@ fun EditDeadlineField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DeadlineDatePicker(
-    deadline: Long,
+    deadline: Long?,
+    initialDate: Long = deadline ?: System.currentTimeMillis(),
     uiAction: (EditUiAction) -> Unit,
     onDialogClose: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = deadline
+        initialSelectedDateMillis = initialDate
     )
     val confirmEnabled by remember(datePickerState.selectedDateMillis) {
         derivedStateOf { datePickerState.selectedDateMillis != null }
@@ -125,20 +129,29 @@ private fun DeadlineDatePicker(
                 onClick = {
                     datePickerState.selectedDateMillis?.let { date ->
                         uiAction(EditUiAction.UpdateDeadline(date))
-                        uiAction(EditUiAction.UpdateDeadlineSet(true))
                     }
                     onDialogClose()
                 },
                 enabled = confirmEnabled
             ) {
-                Text(stringResource(R.string.deadline_calendar_ok), style = ExtendedTheme.typography.button)
+                Text(
+                    stringResource(R.string.deadline_calendar_ok),
+                    style = ExtendedTheme.typography.button
+                )
             }
         },
         dismissButton = {
             TextButton(
-                onClick = onDialogClose
+                onClick = {
+                    if (deadline == null)
+                        uiAction(EditUiAction.UpdateDeadlineSet(false))
+                    onDialogClose()
+                }
             ) {
-                Text(stringResource(R.string.deadline_calendar_cancel), style = ExtendedTheme.typography.button)
+                Text(
+                    stringResource(R.string.deadline_calendar_cancel),
+                    style = ExtendedTheme.typography.button
+                )
             }
         },
         colors = DatePickerDefaults.colors(

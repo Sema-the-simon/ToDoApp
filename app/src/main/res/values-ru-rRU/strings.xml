@@ -28,4 +28,6 @@
     <string name="settings_close_button">Закрыть окно настроек</string>
     <string name="settings_theme_title">Тема</string>
     <string name="settings_title">Настройки</string>
+    <string name="importance_close_button">Закрыть меню выбора важности</string>
+    <string name="importance_save_button">Изменить важность</string>
 </resources>
