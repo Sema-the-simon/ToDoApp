@@ -26,7 +26,7 @@ fun SettingsScreen(
 ) {
 
     Scaffold(
-        topBar = { SettingsTopAppBar(uiAction = onUiAction, navigateBack = navigateBack) },
+        topBar = { SettingsTopAppBar(navigateBack = navigateBack) },
         containerColor = ExtendedTheme.colors.backPrimary
     ) { paddingValues ->
         val scrollState = rememberScrollState()

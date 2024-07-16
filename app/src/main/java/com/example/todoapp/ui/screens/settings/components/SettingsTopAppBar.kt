@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.R
-import com.example.todoapp.ui.screens.settings.action.SettingsUiAction
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
@@ -22,7 +21,6 @@ import com.example.todoapp.ui.themes.TodoAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopAppBar(
-    uiAction: (SettingsUiAction) -> Unit,
     navigateBack: () -> Unit
 ) {
     CenterAlignedTopAppBar(
@@ -55,7 +53,6 @@ fun PreviewSettingsTopAppBar(
 ) {
     TodoAppTheme(darkTheme = darkTheme) {
         SettingsTopAppBar(
-            uiAction = {},
             navigateBack = {}
         )
     }
