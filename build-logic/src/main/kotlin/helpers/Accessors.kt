@@ -13,6 +13,9 @@ import org.gradle.kotlin.dsl.getByType
 internal fun Project.android(configure: Action<BaseAppModuleExtension>): Unit =
     (this as ExtensionAware).extensions.configure("android", configure)
 
+internal val Project.android: BaseAppModuleExtension
+    get() = (this as ExtensionAware).extensions.getByName("android") as BaseAppModuleExtension
+
 internal val Project.libs: LibrariesForLibs
     get() = (this as ExtensionAware).extensions.getByName("libs") as LibrariesForLibs
 

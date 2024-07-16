@@ -3,7 +3,7 @@ package plugins
 import api.TelegramApi
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
-import gradle.kotlin.dsl.accessors._ece9ecfc410f73c47b8fc5a50c6254ee.android
+import helpers.android
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import org.gradle.api.GradleException
