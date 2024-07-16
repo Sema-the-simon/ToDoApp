@@ -1,7 +1,8 @@
 package com.example.todoapp.ui.screens.edit.components
 
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -143,19 +144,29 @@ fun ImportanceItem(
         else -> ExtendedTheme.colors.labelTertiary
     }
     val size = remember { Animatable(initialValue = 1f) }
+
+    val baseBackColor = ExtendedTheme.colors.supportOverlay
+    val backgroundColor = remember { Animatable(initialValue = baseBackColor) }
     val scope = rememberCoroutineScope()
 
-    Box(
-        modifier = modifier
-            .scale(scale = size.value)
-            .background(ExtendedTheme.colors.supportOverlay, RoundedCornerShape(32.dp))
-            .clip(RoundedCornerShape(32.dp))
-            .clickable {
-                changeImportance()
+    val baseModifier = modifier
+        .scale(scale = size.value)
+        .background(backgroundColor.value, RoundedCornerShape(32.dp))
+        .clip(RoundedCornerShape(32.dp))
+        .clickable {
+            changeImportance()
+            scope.launch {
+                size.animateBounce(0.9f, 1f)
+            }
+            if (importance == Importance.IMPORTANT) {
                 scope.launch {
-                    size.animateBounce()
+                    backgroundColor.animateBounce(Red.copy(alpha = 0.5f), baseBackColor, 200)
                 }
-            },
+            }
+        }
+
+    Box(
+        modifier = baseModifier,
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -167,15 +178,19 @@ fun ImportanceItem(
     }
 }
 
-private suspend fun Animatable<Float, AnimationVector1D>.animateBounce() {
+private suspend fun <T, V : AnimationVector> Animatable<T, V>.animateBounce(
+    firstValue: T,
+    secondValue: T,
+    duration: Int = 100
+) {
     animateTo(
-        targetValue = 0.9f,
+        targetValue = firstValue,
         animationSpec = tween(
-            durationMillis = 50
+            durationMillis = duration
         )
     )
     animateTo(
-        targetValue = 1f,
+        targetValue = secondValue,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessLow
