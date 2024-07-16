@@ -103,7 +103,7 @@ data class ListUiState(
     val todoItems: List<TodoItem> = emptyList(),
     val countDoneTasks: Int = 0,
     val isFiltered: Boolean = false,
-    val isDataSynchronized: Boolean = false,
+    val isDataSynchronized: Boolean = true,
     val isRefreshing: Boolean = false,
     val errorMessage: UserError? = null
 )
