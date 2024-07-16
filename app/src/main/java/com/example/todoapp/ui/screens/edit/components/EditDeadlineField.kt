@@ -75,7 +75,7 @@ fun EditDeadlineField(
                 modifier = Modifier.padding(start = 5.dp),
                 color = ExtendedTheme.colors.labelPrimary
             )
-            AnimatedVisibility(visible = deadline != null) {
+            AnimatedVisibility(visible = isDeadlineSet) {
                 Box(modifier = Modifier.padding(5.dp)) {
                     Text(text = dateText, color = Blue)
                 }
