@@ -8,8 +8,9 @@ import androidx.navigation.compose.composable
 import com.example.todoapp.ui.screens.list.ListScreen
 import com.example.todoapp.ui.screens.list.ListViewModel
 
-fun NavGraphBuilder.listDestinations(
-    onNavigateToItem: (todoItemId: String?) -> Unit
+fun NavGraphBuilder.listDestination(
+    onNavigateToItem: (todoItemId: String?) -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     composable<Destination.List> {
         val listViewModel: ListViewModel = hiltViewModel()
@@ -17,7 +18,8 @@ fun NavGraphBuilder.listDestinations(
         ListScreen(
             uiState = listUiState,
             onUiAction = listViewModel::onUiAction,
-            navigateToEditItem = onNavigateToItem
+            navigateToEditItem = onNavigateToItem,
+            navigateToSettings = onNavigateToSettings
         )
     }
 }

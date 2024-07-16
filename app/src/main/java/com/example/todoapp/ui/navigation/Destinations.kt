@@ -10,4 +10,7 @@ sealed class Destination {
 
     @Serializable
     data class Edit(val id: String?) : Destination()
+
+    @Serializable
+    data object Settings : Destination()
 }

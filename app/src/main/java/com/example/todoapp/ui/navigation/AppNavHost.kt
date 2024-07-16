@@ -23,11 +23,23 @@ fun AppNavHost(
             navController = navController,
             startDestination = Destination.List
         ) {
-            listDestinations { todoItemId ->
-                navController.navigate(Destination.Edit(todoItemId))
-            }
+            listDestination(
+                onNavigateToItem = { todoItemId ->
+                    navController.navigate(Destination.Edit(todoItemId))
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Destination.Settings)
+                }
+            )
 
-            editDestinations {
+            editDestination {
+                navController.navigate(Destination.List) {
+                    popUpTo(Destination.List) {
+                        inclusive = true
+                    }
+                }
+            }
+            settingsDestination {
                 navController.navigate(Destination.List) {
                     popUpTo(Destination.List) {
                         inclusive = true

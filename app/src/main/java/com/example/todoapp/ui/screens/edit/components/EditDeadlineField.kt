@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
@@ -32,8 +35,10 @@ import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.themes.Blue
 import com.example.todoapp.ui.themes.BlueTranslucent
 import com.example.todoapp.ui.themes.ExtendedTheme
+import com.example.todoapp.ui.themes.Gray
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
+import com.example.todoapp.ui.themes.White
 import com.example.todoapp.utils.formatLongToDatePattern
 
 
@@ -126,18 +131,44 @@ private fun DeadlineDatePicker(
                 },
                 enabled = confirmEnabled
             ) {
-                Text(stringResource(R.string.deadline_calendar_ok))
+                Text(stringResource(R.string.deadline_calendar_ok), style = ExtendedTheme.typography.button)
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDialogClose
             ) {
-                Text(stringResource(R.string.deadline_calendar_cancel))
+                Text(stringResource(R.string.deadline_calendar_cancel), style = ExtendedTheme.typography.button)
             }
-        }
+        },
+        colors = DatePickerDefaults.colors(
+            containerColor = ExtendedTheme.colors.backSecondary
+        )
     ) {
-        DatePicker(state = datePickerState)
+        DatePicker(
+            state = datePickerState,
+            colors = DatePickerDefaults.colors(
+                containerColor = ExtendedTheme.colors.backSecondary,
+                titleContentColor = ExtendedTheme.colors.labelPrimary,
+                headlineContentColor = ExtendedTheme.colors.labelPrimary,
+                weekdayContentColor = ExtendedTheme.colors.labelTertiary,
+                navigationContentColor = ExtendedTheme.colors.labelPrimary,
+                yearContentColor = ExtendedTheme.colors.labelPrimary,
+                selectedYearContentColor = White,
+                disabledSelectedYearContentColor = ExtendedTheme.colors.supportOverlay,
+                selectedYearContainerColor = Blue,
+                disabledSelectedYearContainerColor = ExtendedTheme.colors.supportOverlay,
+                dayContentColor = ExtendedTheme.colors.labelPrimary,
+                disabledDayContentColor = ExtendedTheme.colors.supportOverlay,
+                selectedDayContentColor = White,
+                disabledSelectedDayContentColor = ExtendedTheme.colors.supportOverlay,
+                selectedDayContainerColor = Blue,
+                disabledSelectedDayContainerColor = Gray,
+                todayContentColor = Blue,
+                todayDateBorderColor = Blue,
+                dividerColor = ExtendedTheme.colors.supportSeparator
+            )
+        )
     }
 
 }
@@ -148,11 +179,35 @@ fun PreviewDeadline(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {
-        EditDeadlineField(
-            deadline = 1696693800000L,
-            isDeadlineSet = true,
-            isDialogOpen = false,
-            uiAction = {}
+        Column {
+            EditDeadlineField(
+                deadline = 1696693800000L,
+                isDeadlineSet = true,
+                isDialogOpen = false,
+                uiAction = {}
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+            EditDeadlineField(
+                deadline = 169669380000L,
+                isDeadlineSet = false,
+                isDialogOpen = false,
+                uiAction = {}
+            )
+            Spacer(modifier = Modifier.height(25.dp))
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDatePicker(
+    @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
+) {
+    TodoAppTheme(isDarkTheme) {
+        DeadlineDatePicker(
+            deadline = 150000L,
+            uiAction = {},
+            onDialogClose = {}
         )
     }
 }

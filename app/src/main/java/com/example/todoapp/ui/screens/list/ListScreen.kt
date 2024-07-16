@@ -54,7 +54,8 @@ import kotlinx.coroutines.launch
 fun ListScreen(
     uiState: ListUiState,
     onUiAction: (ListUiAction) -> Unit,
-    navigateToEditItem: (String?) -> Unit
+    navigateToEditItem: (String?) -> Unit,
+    navigateToSettings: () -> Unit
 ) {
 
     val scrollBehavior =
@@ -95,7 +96,9 @@ fun ListScreen(
                     if (isTopScroll && !isFiltered) {
                         needToScroll = true
                     }
-                }
+                },
+                navigateToSettings = navigateToSettings,
+
             )
         },
         floatingActionButton = {
@@ -134,6 +137,6 @@ fun PreviewListScreen(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {
-        ListScreen(ListUiState(getData().take(2), 1), {}, {})
+        ListScreen(ListUiState(getData().take(2), 1), {}, {}, {})
     }
 }

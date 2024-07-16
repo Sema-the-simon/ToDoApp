@@ -1,8 +1,10 @@
 package com.example.todoapp.utils
 
-import com.example.todoapp.data.db.entities.TodoItemEntity
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import com.example.todoapp.domain.model.Importance
-import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.domain.model.ThemeMode
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -33,21 +35,12 @@ fun Importance.getImportanceId(): Int =
         else -> IMPORTANCE_LOW_ID
     }
 
-fun importanceById(id: Int): Importance =
-    when (id) {
-        IMPORTANCE_IMPORTANT_ID -> Importance.IMPORTANT
-        IMPORTANCE_BASIC_ID -> Importance.BASIC
-        else -> Importance.LOW
-    }
+@Composable
+@ReadOnlyComposable
+fun isDarkThemeSetUp(themeMode: ThemeMode): Boolean = when (themeMode) {
+    ThemeMode.LIGHT -> false
+    ThemeMode.DARK -> true
+    else -> isSystemInDarkTheme()
+}
 
-fun TodoItemEntity.toTodoItem(): TodoItem =
-    TodoItem(
-        id = this.id,
-        text = this.text,
-        importance = importanceById(this.importanceId),
-        deadline = this.deadline,
-        isDone = this.done,
-        creationDate = this.createdAt,
-        modificationDate = this.changedAt
-    )
 

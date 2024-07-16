@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.todoapp.ui.screens.edit.EditScreen
 import com.example.todoapp.ui.screens.edit.EditViewModel
 
-fun NavGraphBuilder.editDestinations(
+fun NavGraphBuilder.editDestination(
     onNavigateUp: () -> Unit
 ) {
     composable<Destination.Edit> {

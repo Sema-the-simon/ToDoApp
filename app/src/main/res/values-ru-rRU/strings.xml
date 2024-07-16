@@ -22,4 +22,10 @@
     <string name="error_404">Такого элемента не существует, попробуйте синхронизировать данные</string>
     <string name="no_internet_connection">Нет подключения к интернету</string>
     <string name="unexpected_error">Что-то пошло не так</string>
+    <string name="system_theme_light">Всегда светлая</string>
+    <string name="system_theme_dark">Всегда темная</string>
+    <string name="system_theme_system">Системная</string>
+    <string name="settings_close_button">Закрыть окно настроек</string>
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_title">Настройки</string>
 </resources>
