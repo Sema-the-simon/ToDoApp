@@ -113,7 +113,7 @@ class TodoItemsRepository @Inject constructor(
             }
         } else {
             if (isDataLoading) {
-                delay(10)
+                delay(100)
                 isDataLoading = false
                 errorMessage = UserError.NoInternetConnection
             }
@@ -167,7 +167,6 @@ class TodoItemsRepository @Inject constructor(
                 val curEl = currentItems[newEl.id]!!
                 if (curEl.isDeleted) {
                     todoItemDao.deleteTodoDataById(curEl.id)
-                    //currentItems.remove(newEl.id)
                     continue
                 }
                 val serverModification = newEl.modificationDate ?: 0L
@@ -227,6 +226,22 @@ class TodoItemsRepository @Inject constructor(
                 onSuccess = { data ->
                     revision = data.revision
                     todoItemDao.deleteTodoDataById(id)
+                },
+                onError = handleServerError,
+            )
+        }
+    }
+
+    override suspend fun removeItems(ids: List<String>) = withContext(defaultDispatcher) {
+        val items = ids.map { id -> getTodoItem(id)!! }
+        items.forEach { item -> todoItemDao.updateTodoData(item.toEntity(isDeleted = true)) }
+        synchronizedNetworkRun {
+            val newElements = todoItems.value.toMutableList().also { it.removeAll(items) }
+            val result = api.updateList(revision, createListRequest(newElements))
+            result.handle(
+                onSuccess = { data ->
+                    revision = data.revision
+                    items.forEach { todoItemDao.deleteTodoDataById(it.id) }
                 },
                 onError = handleServerError,
             )

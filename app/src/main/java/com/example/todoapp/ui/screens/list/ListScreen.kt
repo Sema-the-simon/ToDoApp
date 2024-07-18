@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.screens.list
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -10,8 +11,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
@@ -19,15 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ui.screens.list.action.ListUiAction
+import com.example.todoapp.ui.screens.list.components.CountdownSnackbar
 import com.example.todoapp.ui.screens.list.components.ListTopAppBar
 import com.example.todoapp.ui.screens.list.components.TodoList
 import com.example.todoapp.ui.themes.Blue
@@ -57,6 +65,7 @@ fun ListScreen(
     navigateToEditItem: (String?) -> Unit,
     navigateToSettings: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
 
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -70,13 +79,36 @@ fun ListScreen(
         }
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val undoSnackBarStack = remember {
+        mutableStateListOf<TodoItem>()
+    }
+    LaunchedErrorSnackbar(uiState, snackbarHostState, context, onUiAction, undoSnackBarStack)
+
+
+
+    LaunchedEffect(undoSnackBarStack.size) {
+        if (undoSnackBarStack.isNotEmpty()) {
             launch {
-                snackbarHostState.showSnackbar(context.getString(uiState.errorMessage.toStringResource()))
-                onUiAction(ListUiAction.ClearErrorMessage)
+                val currentTodo = undoSnackBarStack.last()
+                val res = snackbarHostState.showSnackbar(
+                    message = "Delete task: ${currentTodo.text}",
+                    actionLabel = "Cancel",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Indefinite
+                )
+                when (res) {
+                    SnackbarResult.ActionPerformed -> {
+                        onUiAction(ListUiAction.ShowHiddenTodoItem(currentTodo.id))
+                        undoSnackBarStack.removeLast()
+                    }
+
+                    SnackbarResult.Dismissed -> {
+                        onUiAction(ListUiAction.RemoveTodoItems(undoSnackBarStack.map { todo -> todo.id }))
+                        undoSnackBarStack.clear()
+                    }
+                }
             }
         }
     }
@@ -84,7 +116,13 @@ fun ListScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                if (data.visuals.withDismissAction) {
+                    CountdownSnackbar(data = data)
+                } else
+                    Snackbar(snackbarData = data)
+
+            }
         },
         topBar = {
             ListTopAppBar(
@@ -99,7 +137,7 @@ fun ListScreen(
                 },
                 navigateToSettings = navigateToSettings,
 
-            )
+                )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -122,11 +160,37 @@ fun ListScreen(
                 listState = listState,
                 todoList = uiState.todoItems,
                 isDataSynchronized = uiState.isDataSynchronized,
-                onAction = onUiAction,
+                onUpdateItem = { id -> onUiAction(ListUiAction.UpdateTodoItem(id)) },
+                onDeleteItem = { todo ->
+                    onUiAction(ListUiAction.HideTodoItem(todo.id))
+                    snackbarHostState.currentSnackbarData?.let { data ->
+                        if (!data.visuals.withDismissAction)
+                            data.dismiss()
+                    }
+                    undoSnackBarStack.add(todo)
+                },
                 onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+private fun LaunchedErrorSnackbar(
+    uiState: ListUiState,
+    snackbarHostState: SnackbarHostState,
+    context: Context,
+    onUiAction: (ListUiAction) -> Unit,
+    undoStack: List<TodoItem>
+) {
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            if (undoStack.isEmpty())
+                launch {
+                    snackbarHostState.showSnackbar(context.getString(message.toStringResource()))
+                    onUiAction(ListUiAction.ClearErrorMessage)
+                }
         }
     }
 }

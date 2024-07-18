@@ -13,6 +13,7 @@ interface Repository {
     suspend fun addTodoItem(todoItem: TodoItem)
     suspend fun updateItem(todoItem: TodoItem)
     suspend fun removeItem(id: String)
+    suspend fun removeItems(ids: List<String>)
     suspend fun getTodoItem(id: String): TodoItem?
     suspend fun clearErrorMessage()
 

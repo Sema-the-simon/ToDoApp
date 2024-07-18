@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +34,9 @@ class ListViewModel @Inject constructor(
     private val repository: Repository,
     private val filterListUseCase: FilterListUseCase
 ) : ViewModel() {
+
+    private val hiddenElements = hashSetOf<String>()
+
     private val _uiState: MutableStateFlow<ListUiState> = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = combine(
         _uiState,
@@ -41,7 +45,7 @@ class ListViewModel @Inject constructor(
         filterListUseCase.isFiltered
     ) { state, tasks, dataState, isFiltered ->
         state.copy(
-            todoItems = filterListUseCase(tasks, isFiltered),
+            todoItems = filterListUseCase(tasks, isFiltered).filterHidden(),
             countDoneTasks = repository.countDoneTodos(),
             isFiltered = isFiltered,
             isDataSynchronized = dataState.isDataSynchronized,
@@ -54,10 +58,15 @@ class ListViewModel @Inject constructor(
         initialValue = ListUiState()
     )
 
+    private fun List<TodoItem>.filterHidden(): List<TodoItem> =
+        this.filter { it.id !in hiddenElements }
+
     fun onUiAction(action: ListUiAction) {
         when (action) {
             is ListUiAction.UpdateTodoItem -> updateTodoItem(action.todoItemId)
-            is ListUiAction.RemoveTodoItem -> removeTodoItem(action.todoItemId)
+            is ListUiAction.RemoveTodoItems -> removeTodoItems(action.todoItemIds)
+            is ListUiAction.HideTodoItem -> hideTodoItem(action.todoItemId)
+            is ListUiAction.ShowHiddenTodoItem -> showHiddenTodoItem(action.todoItemId)
             is ListUiAction.ChangeFilter -> changeFilterState(action.isFiltered)
             ListUiAction.RefreshList -> refreshList()
             ListUiAction.ClearErrorMessage -> clearErrorMessage()
@@ -74,10 +83,21 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private fun removeTodoItem(todoItemId: String) {
+
+    private fun removeTodoItems(todoItemIds: List<String>) {
         viewModelScope.launch {
-            repository.removeItem(todoItemId)
+            repository.removeItems(todoItemIds)
         }
+    }
+
+    private fun hideTodoItem(todoItemId: String) {
+        hiddenElements.add(todoItemId)
+        _uiState.update { uiState.value }
+    }
+
+    private fun showHiddenTodoItem(todoItemId: String) {
+        hiddenElements.remove(todoItemId)
+        _uiState.update { uiState.value }
     }
 
     private fun changeFilterState(isFiltered: Boolean) {
