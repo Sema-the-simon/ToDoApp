@@ -129,7 +129,7 @@ class EditViewModel @Inject constructor(
     private fun removeTodoItem() {
         if (!isNewItem)
             viewModelScope.launch {
-                repository.removeItem(todoItem.id)
+                repository.addInUndoStack(todoItem)
             }
     }
 

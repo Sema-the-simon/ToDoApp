@@ -21,7 +21,7 @@ fun AppNavHost(
     ) {
         NavHost(
             navController = navController,
-            startDestination = Destination.List
+            startDestination = Destination.List()
         ) {
             listDestination(
                 onNavigateToItem = { todoItemId ->
@@ -32,16 +32,16 @@ fun AppNavHost(
                 }
             )
 
-            editDestination {
-                navController.navigate(Destination.List) {
-                    popUpTo(Destination.List) {
+            editDestination { hideElementId ->
+                navController.navigate(Destination.List(hideElementId)) {
+                    popUpTo(Destination.List()) {
                         inclusive = true
                     }
                 }
             }
             settingsDestination {
-                navController.navigate(Destination.List) {
-                    popUpTo(Destination.List) {
+                navController.navigate(Destination.List()) {
+                    popUpTo(Destination.List()) {
                         inclusive = true
                     }
                 }

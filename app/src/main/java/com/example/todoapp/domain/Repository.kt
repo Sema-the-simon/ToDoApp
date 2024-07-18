@@ -16,11 +16,15 @@ interface Repository {
     suspend fun removeItems(ids: List<String>)
     suspend fun getTodoItem(id: String): TodoItem?
     suspend fun clearErrorMessage()
+    suspend fun addInUndoStack(todoItem: TodoItem)
+    suspend fun removeLastInUndoStack()
+    suspend fun clearUndoStack()
 
     data class DataState(
         val isDataLoading: Boolean = false,
         val isDataSynchronized: Boolean = false,
-        val errorMessage : UserError? = null
+        val errorMessage : UserError? = null,
+        val undoElementsStack: MutableList<TodoItem> = mutableListOf()
     )
 }
 

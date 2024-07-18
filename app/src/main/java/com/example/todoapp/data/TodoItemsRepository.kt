@@ -255,4 +255,19 @@ class TodoItemsRepository @Inject constructor(
     override suspend fun clearErrorMessage() {
         errorMessage = null
     }
+
+    override suspend fun addInUndoStack(todoItem: TodoItem) {
+        dataState.value.undoElementsStack.add(todoItem)
+        //_dataState.update { it.copy() }
+    }
+
+    override suspend fun removeLastInUndoStack() {
+        dataState.value.undoElementsStack.removeLast()
+        //_dataState.update { it.copy() }
+    }
+
+    override suspend fun clearUndoStack() {
+        dataState.value.undoElementsStack.clear()
+        //_dataState.update { it.copy() }
+    }
 }
