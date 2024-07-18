@@ -241,7 +241,7 @@ fun ScaffoldWithSnackbar() {
                 ExtendedFloatingActionButton(
                     onClick = {
                         scope.launch {
-                            val res = snackbarHostState.showSnackbar(
+                            snackbarHostState.showSnackbar(
                                 message = "current count is - $count",
                                 actionLabel = "CANCEL",
                                 withDismissAction = true,

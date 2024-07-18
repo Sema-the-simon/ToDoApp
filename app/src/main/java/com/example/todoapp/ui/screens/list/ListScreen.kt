@@ -23,10 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -65,8 +63,6 @@ fun ListScreen(
     navigateToEditItem: (String?) -> Unit,
     navigateToSettings: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val listState = rememberLazyListState()
@@ -81,9 +77,8 @@ fun ListScreen(
 
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val undoSnackBarStack = remember {
-        mutableStateListOf<TodoItem>()
-    }
+    val undoSnackBarStack = uiState.undoElementsStack
+
     LaunchedErrorSnackbar(uiState, snackbarHostState, context, onUiAction, undoSnackBarStack)
 
 
@@ -101,12 +96,12 @@ fun ListScreen(
                 when (res) {
                     SnackbarResult.ActionPerformed -> {
                         onUiAction(ListUiAction.ShowHiddenTodoItem(currentTodo.id))
-                        undoSnackBarStack.removeLast()
+                        onUiAction(ListUiAction.RemoveLastInUndoStack)
                     }
 
                     SnackbarResult.Dismissed -> {
                         onUiAction(ListUiAction.RemoveTodoItems(undoSnackBarStack.map { todo -> todo.id }))
-                        undoSnackBarStack.clear()
+                        onUiAction(ListUiAction.ClearUndoStack)
                     }
                 }
             }
@@ -167,7 +162,7 @@ fun ListScreen(
                         if (!data.visuals.withDismissAction)
                             data.dismiss()
                     }
-                    undoSnackBarStack.add(todo)
+                    onUiAction(ListUiAction.AddInUndoStack(todo))
                 },
                 onItemClick = { todoItemId -> navigateToEditItem(todoItemId) },
                 modifier = Modifier.fillMaxWidth()
