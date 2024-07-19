@@ -26,7 +26,7 @@ interface DataBaseModule {
         @Singleton
         @Provides
         fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-            return AppDatabase.getDatabaseInstance(context)
+            return AppDatabase.getInstance(context)
         }
     }
 }

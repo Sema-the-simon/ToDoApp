@@ -21,18 +21,21 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun getTodoItemDao(): TodoItemDao
 
     companion object {
+
+        // For Singleton instantiation
+        @Volatile
         private var database: AppDatabase? = null
 
-        fun getDatabaseInstance(context: Context): AppDatabase {
-            return if (database == null) {
-                synchronized(this) {
-                    Room.databaseBuilder(context, AppDatabase::class.java, "todoitems.db")
-                        .createFromAsset("database_db.db")
-                        .build()
-                }
-            } else {
-                database!!
+        fun getInstance(context: Context): AppDatabase {
+            return database ?: synchronized(this) {
+                database ?: buildDatabase(context).also { database = it }
             }
+        }
+
+        private fun buildDatabase(context: Context): AppDatabase {
+            return Room.databaseBuilder(context, AppDatabase::class.java, "todoitems.db")
+                .createFromAsset("database_db.db")
+                .build()
         }
     }
 }

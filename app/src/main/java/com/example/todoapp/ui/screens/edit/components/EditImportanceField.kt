@@ -24,6 +24,7 @@ import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Red
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
+import com.example.todoapp.utils.toStringResource
 
 
 @Composable

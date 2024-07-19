@@ -1,11 +1,14 @@
 package com.example.todoapp.ui.screens.edit.components
 
 import androidx.compose.animation.Animatable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +47,7 @@ import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.Green
 import com.example.todoapp.ui.themes.Red
+import com.example.todoapp.utils.toStringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +62,15 @@ fun EditImportanceBottomSheet(
     val bottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    if (showModalBottomSheet) {
+    AnimatedVisibility(
+        visible = showModalBottomSheet,
+        enter = slideInVertically(
+            initialOffsetY = { it / 2 }
+        ),
+        exit = slideOutVertically(
+            targetOffsetY = { it / 2 }
+        )
+    ) {
         ModalBottomSheet(
             onDismissRequest = {
                 uiAction(EditUiAction.UpdateImportance(currentImportance))

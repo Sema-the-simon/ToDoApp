@@ -1,7 +1,5 @@
 package com.example.todoapp.data.network.model
 
-import com.example.todoapp.domain.model.TodoItem
-import com.example.todoapp.utils.toImportance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,28 +28,3 @@ data class TodoItemDto(
     @SerialName("files")
     val files: List<String>? = null,
 )
-
-fun TodoItemDto.toTodoItem(): TodoItem {
-    return TodoItem(
-        id = this.id,
-        text = this.text,
-        importance = this.importance.toImportance(),
-        isDone = this.done,
-        creationDate = this.createdAt,
-        deadline = this.deadline,
-        modificationDate = this.changedAt
-    )
-}
-
-fun TodoItem.asDto(userId: String): TodoItemDto {
-    return TodoItemDto(
-        id = this.id,
-        text = this.text,
-        importance = this.importance.toServerFormatString(),
-        deadline = this.deadline,
-        done = this.isDone,
-        createdAt = this.creationDate,
-        changedAt = this.modificationDate ?: creationDate,
-        lastUpdatedBy = userId
-    )
-}

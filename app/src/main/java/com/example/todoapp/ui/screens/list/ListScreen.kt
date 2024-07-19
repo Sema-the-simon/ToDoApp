@@ -31,7 +31,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.todoapp.R
 import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.domain.model.UserError
 import com.example.todoapp.ui.screens.list.action.ListUiAction
 import com.example.todoapp.ui.screens.list.components.CountdownSnackbar
 import com.example.todoapp.ui.screens.list.components.ListTopAppBar
@@ -63,12 +65,9 @@ fun ListScreen(
     navigateToEditItem: (String?) -> Unit,
     navigateToSettings: () -> Unit
 ) {
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val listState = rememberLazyListState()
     var needToScroll by remember { mutableStateOf(false) }
     val isTopScroll by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
-
     LaunchedEffect(needToScroll && !isTopScroll) {
         launch {
             listState.animateScrollToItem(index = 0)
@@ -79,34 +78,22 @@ fun ListScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val undoSnackBarStack = uiState.undoElementsStack
 
-    LaunchedErrorSnackbar(uiState, snackbarHostState, context, onUiAction, undoSnackBarStack)
+    LaunchedErrorSnackbar(
+        context,
+        snackbarHostState,
+        uiState.errorMessage,
+        undoSnackBarStack,
+        onUiAction
+    )
+    LaunchedUndoSnackbar(
+        context,
+        snackbarHostState,
+        undoSnackBarStack,
+        onUiAction
+    )
 
-
-
-    LaunchedEffect(undoSnackBarStack.size) {
-        if (undoSnackBarStack.isNotEmpty()) {
-            launch {
-                val currentTodo = undoSnackBarStack.last()
-                val res = snackbarHostState.showSnackbar(
-                    message = "Delete task: ${currentTodo.text}",
-                    actionLabel = "Cancel",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Indefinite
-                )
-                when (res) {
-                    SnackbarResult.ActionPerformed -> {
-                        onUiAction(ListUiAction.ShowHiddenTodoItem(currentTodo.id))
-                        onUiAction(ListUiAction.RemoveLastInUndoStack)
-                    }
-
-                    SnackbarResult.Dismissed -> {
-                        onUiAction(ListUiAction.RemoveTodoItems(undoSnackBarStack.map { todo -> todo.id }))
-                        onUiAction(ListUiAction.ClearUndoStack)
-                    }
-                }
-            }
-        }
-    }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -116,7 +103,6 @@ fun ListScreen(
                     CountdownSnackbar(data = data)
                 } else
                     Snackbar(snackbarData = data)
-
             }
         },
         topBar = {
@@ -130,9 +116,8 @@ fun ListScreen(
                         needToScroll = true
                     }
                 },
-                navigateToSettings = navigateToSettings,
-
-                )
+                navigateToSettings = navigateToSettings
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -144,7 +129,7 @@ fun ListScreen(
                 Icon(Icons.Rounded.Add, contentDescription = null)
             }
         },
-        containerColor = ExtendedTheme.colors.backPrimary,
+        containerColor = ExtendedTheme.colors.backPrimary
     ) { paddingValues ->
         PullToRefreshBox(
             modifier = Modifier.padding(paddingValues),
@@ -172,15 +157,48 @@ fun ListScreen(
 }
 
 @Composable
-private fun LaunchedErrorSnackbar(
-    uiState: ListUiState,
-    snackbarHostState: SnackbarHostState,
+private fun LaunchedUndoSnackbar(
     context: Context,
-    onUiAction: (ListUiAction) -> Unit,
-    undoStack: List<TodoItem>
+    snackbarHostState: SnackbarHostState,
+    undoSnackBarStack: List<TodoItem>,
+    onUiAction: (ListUiAction) -> Unit
 ) {
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let { message ->
+    LaunchedEffect(undoSnackBarStack.size) {
+        if (undoSnackBarStack.isNotEmpty()) {
+            launch {
+                val currentTodo = undoSnackBarStack.last()
+                val res = snackbarHostState.showSnackbar(
+                    message = context.getString(R.string.snackbar_undo_message, currentTodo.text),
+                    actionLabel = context.getString(R.string.snackbar_cancel),
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Indefinite
+                )
+                when (res) {
+                    SnackbarResult.ActionPerformed -> {
+                        onUiAction(ListUiAction.ShowHiddenTodoItem(currentTodo.id))
+                        onUiAction(ListUiAction.RemoveLastInUndoStack)
+                    }
+
+                    SnackbarResult.Dismissed -> {
+                        onUiAction(ListUiAction.RemoveTodoItems(undoSnackBarStack.map { todo -> todo.id }))
+                        onUiAction(ListUiAction.ClearUndoStack)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LaunchedErrorSnackbar(
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+    errMessage: UserError?,
+    undoStack: List<TodoItem>,
+    onUiAction: (ListUiAction) -> Unit
+) {
+    LaunchedEffect(errMessage) {
+        errMessage?.let { message ->
             if (undoStack.isEmpty())
                 launch {
                     snackbarHostState.showSnackbar(context.getString(message.toStringResource()))

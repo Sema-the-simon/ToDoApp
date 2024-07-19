@@ -4,11 +4,11 @@ import java.io.File
 
 fun BaseAppModuleExtension.baseAndroidConfig() {
     namespace = AndroidConst.NAMESPACE
-    compileSdk = AndroidConst.COMPILE_SKD
+    compileSdk = AndroidConst.COMPILE_SDK
     defaultConfig {
 
-        minSdk = AndroidConst.MIN_SKD
-        targetSdk = AndroidConst.TARGET_SKD
+        minSdk = AndroidConst.MIN_SDK
+        targetSdk = AndroidConst.TARGET_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

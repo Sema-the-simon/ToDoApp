@@ -30,4 +30,6 @@
     <string name="settings_title">Настройки</string>
     <string name="importance_close_button">Закрыть меню выбора важности</string>
     <string name="importance_save_button">Изменить важность</string>
+    <string name="snackbar_undo_message">Удалить задачу: %1$s</string>
+    <string name="snackbar_cancel">Отмена</string>
 </resources>
