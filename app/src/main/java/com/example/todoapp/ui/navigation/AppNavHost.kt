@@ -23,6 +23,7 @@ fun AppNavHost(
             navController = navController,
             startDestination = Destination.List()
         ) {
+
             listDestination(
                 onNavigateToItem = { todoItemId ->
                     navController.navigate(Destination.Edit(todoItemId))
@@ -39,9 +40,22 @@ fun AppNavHost(
                     }
                 }
             }
-            settingsDestination {
-                navController.navigate(Destination.List()) {
-                    popUpTo(Destination.List()) {
+            settingsDestination(
+                onNavigateUp = {
+                    navController.navigate(Destination.List()) {
+                        popUpTo(Destination.List()) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateToInfo = {
+                    navController.navigate(Destination.Info)
+                }
+            )
+
+            infoDestination {
+                navController.navigate(Destination.Settings) {
+                    popUpTo(Destination.Settings) {
                         inclusive = true
                     }
                 }

@@ -32,4 +32,6 @@
     <string name="importance_save_button">Изменить важность</string>
     <string name="snackbar_undo_message">Удалить задачу: %1$s</string>
     <string name="snackbar_cancel">Отмена</string>
+    <string name="navigate_info_button">О приложении</string>
+
 </resources>

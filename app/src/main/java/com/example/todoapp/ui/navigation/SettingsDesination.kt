@@ -12,7 +12,8 @@ import com.example.todoapp.ui.screens.settings.SettingsScreen
 import com.example.todoapp.ui.screens.settings.SettingsViewModel
 
 fun NavGraphBuilder.settingsDestination(
-    onNavigateUp: () -> Unit
+    onNavigateUp: () -> Unit,
+    navigateToInfo: () -> Unit
 ) {
     composable<Destination.Settings>(
         enterTransition = { enterSlideInto() },
@@ -23,7 +24,8 @@ fun NavGraphBuilder.settingsDestination(
         SettingsScreen(
             uiState = settingsUiState,
             onUiAction = settingsViewModel::onUiAction,
-            navigateBack = onNavigateUp
+            navigateBack = onNavigateUp,
+            navigateToInfo = navigateToInfo
         )
 
         BackHandler {

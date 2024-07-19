@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -42,6 +43,14 @@ object ExtendedTheme {
     val typography: ExtendedTypography
         @Composable
         get() = LocalExtendedTypography.current
+
+    val isDarkTheme: Boolean
+        @Composable
+        get() = LocalThemeScheme.current
+}
+
+val LocalThemeScheme = staticCompositionLocalOf {
+    true
 }
 
 @Composable
@@ -62,7 +71,7 @@ fun TodoAppTheme(
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = !darkTheme
-                isAppearanceLightNavigationBars = ! darkTheme
+                isAppearanceLightNavigationBars = !darkTheme
             }
 
         }
@@ -70,7 +79,8 @@ fun TodoAppTheme(
 
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColors,
-        LocalExtendedTypography provides extendedTypography
+        LocalExtendedTypography provides extendedTypography,
+        LocalThemeScheme provides darkTheme
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

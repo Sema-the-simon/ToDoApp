@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 
 sealed class Destination {
     @Serializable
+    data object Info : Destination()
+
+    @Serializable
     data class List(val hideElementId: String? = null) : Destination()
 
     @Serializable

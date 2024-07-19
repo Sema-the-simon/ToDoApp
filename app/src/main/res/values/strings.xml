@@ -31,4 +31,5 @@
     <string name="importance_save_button">Change importance</string>
     <string name="snackbar_undo_message">Delete task: %1$s</string>
     <string name="snackbar_cancel">Cancel</string>
+    <string name="navigate_info_button">About app</string>
 </resources>
