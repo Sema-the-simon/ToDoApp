@@ -1,7 +1,6 @@
 package com.example.todoapp.data.workers
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -19,7 +18,6 @@ class NetworkUpdateTodoItemsWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = try {
-        Log.d("networkTEST", "do Work")
         repository.loadTodoItems()
         Result.success()
     } catch (error: Throwable) {
