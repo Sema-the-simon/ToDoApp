@@ -12,6 +12,8 @@ env:
   TG_CHAT: ${{ secrets.TG_CHAT }}
   TG_TOKEN: ${{ secrets.TG_TOKEN }}
 
+  API_TOKEN: ${{ secrets.API_TOKEN }}
+
   KEYSTORE_JKS_BASE_64: ${{ secrets.KEYSTORE_JKS_BASE_64 }}
   KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
   KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
