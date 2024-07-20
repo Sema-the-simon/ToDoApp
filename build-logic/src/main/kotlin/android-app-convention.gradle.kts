@@ -37,7 +37,7 @@ configure<BaseAppModuleExtension> {
             buildConfigField(
                 type = "String",
                 name = "API_TOKEN",
-                value = System.getenv("API_TOKEN")
+                value = "\"${System.getenv("API_TOKEN")}\""
             )
         }
     }
