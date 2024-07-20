@@ -12,15 +12,6 @@ fun BaseAppModuleExtension.baseAndroidConfig() {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = AndroidConst.COMPILE_JDK_VERSION
         targetCompatibility = AndroidConst.COMPILE_JDK_VERSION

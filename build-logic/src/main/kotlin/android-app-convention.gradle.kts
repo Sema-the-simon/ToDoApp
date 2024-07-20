@@ -18,6 +18,25 @@ configure<BaseAppModuleExtension> {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
+    signingConfigs {
+        create("release") {
+            keyAlias = System.getenv("KEYSTORE_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+            storeFile = file(System.getenv("HOME") + "/keystores/release_upload_keystore.jks")
+            storePassword = System.getenv("STORE_PASSWORD")
+        }
+    }
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
