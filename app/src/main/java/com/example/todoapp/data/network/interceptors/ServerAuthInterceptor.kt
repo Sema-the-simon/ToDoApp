@@ -24,7 +24,7 @@ class ServerAuthInterceptor : Interceptor {
         val originalRequest = chain.request()
 
         Log.d("API_TOKEN", "currentBuildConfig is debug :${BuildConfig.DEBUG}")
-        Log.d("API_TOKEN", "currentApiToken is :${System.getenv("API_TOKEN")}")
+        Log.d("API_TOKEN", "currentApiToken is :${BuildConfig.API_TOKEN}")
 
         val token = TOKEN
             ?: throw IllegalArgumentException("Place your token here in TOKEN constant in ServerAuthInterceptor.kt")
