@@ -34,6 +34,11 @@ configure<BaseAppModuleExtension> {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField(
+                type = "String",
+                name = "API_TOKEN",
+                value = System.getenv("API_TOKEN")
+            )
         }
     }
 
