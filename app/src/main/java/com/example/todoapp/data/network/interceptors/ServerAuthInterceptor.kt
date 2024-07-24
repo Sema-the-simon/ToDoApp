@@ -12,8 +12,8 @@ enum class TokenType {
 
 private val TOKEN: String? =
     if (BuildConfig.DEBUG)
-        null // place your token here
-    else System.getenv("API_TOKEN")
+        null // put your token here
+    else BuildConfig.API_TOKEN
 private val TYPE: String = TokenType.OAuth.name
 
 /** Intercepts HTTP requests to add an authorization header with a token. */
