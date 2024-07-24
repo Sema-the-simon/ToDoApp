@@ -32,11 +32,11 @@ fun ThemePicker(
     uiAction: (SettingsUiAction) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-
+    val onClickLabel = stringResource(R.string.change_theme)
     Column(
         modifier = Modifier
             .padding(all = 15.dp)
-            .clickable { expanded = true }
+            .clickable(onClickLabel = onClickLabel) { expanded = true }
     ) {
         Text(
             text = stringResource(id = R.string.settings_theme_title),

@@ -16,6 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.R
@@ -51,6 +55,7 @@ fun EditTopAppBar(
                 label = "save_button_color_animation"
             )
 
+            val description = stringResource(R.string.save_button_description)
             TextButton(
                 onClick = {
                     uiAction(EditUiAction.SaveTask)
@@ -60,11 +65,16 @@ fun EditTopAppBar(
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = saveButtonColor,
                     disabledContentColor = saveButtonColor
-                )
+                ),
+                modifier = Modifier.semantics {
+                    heading()
+                    contentDescription = description
+                }
             ) {
                 Text(
                     text = stringResource(R.string.edit_save_button),
                     style = ExtendedTheme.typography.button,
+                    modifier = Modifier.clearAndSetSemantics {  }
                 )
             }
         },

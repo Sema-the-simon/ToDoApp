@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.todoapp.R
 import com.example.todoapp.domain.model.Importance
@@ -77,7 +77,7 @@ fun EditImportanceBottomSheet(
                 closeBottomSheet()
             },
             sheetState = bottomSheetState,
-            containerColor = ExtendedTheme.colors.backPrimary
+            containerColor = ExtendedTheme.colors.backPrimary,
         ) {
             Column(
                 modifier = Modifier
@@ -134,8 +134,8 @@ fun EditImportanceBottomSheet(
                             selected = currentImportance == importance,
                             modifier = Modifier.weight(0.3f)
                         )
-                        if (importance != Importance.IMPORTANT)
-                            Spacer(Modifier.weight(0.05f))
+                        //if (importance != Importance.IMPORTANT)
+                            //Spacer(Modifier.weight(0.05f))
                     }
                 }
             }
@@ -161,11 +161,14 @@ fun ImportanceItem(
     val backgroundColor = remember { Animatable(initialValue = baseBackColor) }
     val scope = rememberCoroutineScope()
 
+    val onClickLabel = stringResource(R.string.choose_this)
     val baseModifier = modifier
         .scale(scale = size.value)
         .background(backgroundColor.value, RoundedCornerShape(32.dp))
         .clip(RoundedCornerShape(32.dp))
-        .clickable {
+        .clickable(
+            onClickLabel = onClickLabel
+        ) {
             changeImportance()
             scope.launch {
                 size.animateBounce(0.9f, 1f)
@@ -185,7 +188,8 @@ fun ImportanceItem(
             text = stringResource(id = importance.toStringResource()),
             modifier = Modifier.padding(all = 10.dp),
             color = color,
-            style = ExtendedTheme.typography.body
+            style = ExtendedTheme.typography.body,
+            textAlign = TextAlign.Center
         )
     }
 }

@@ -40,6 +40,13 @@ configure<BaseAppModuleExtension> {
                 value = "\"${System.getenv("API_TOKEN")}\""
             )
         }
+        debug {
+            buildConfigField(
+                type = "String",
+                name = "API_TOKEN",
+                value = "null"
+            )
+        }
     }
 
     buildFeatures {

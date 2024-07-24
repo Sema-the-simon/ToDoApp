@@ -27,10 +27,11 @@ fun NavGraphBuilder.editDestination(
         val editUiEvent by editViewModel.uiEvent.collectAsStateWithLifecycle(null)
 
         EditScreen(
+            id = editScreen.id,
             uiState = editUiState,
             uiEvent = editUiEvent,
             onUiAction = editViewModel::onUiAction,
-            navigateUp = { onNavigateUp(editScreen.id) }
+            navigateUp = onNavigateUp
         )
         BackHandler {
             onNavigateUp(null)

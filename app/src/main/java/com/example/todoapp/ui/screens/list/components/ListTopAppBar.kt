@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.TextUnit
@@ -41,7 +43,8 @@ fun ListTopAppBar(
     ),
     isFiltered: Boolean = false,
     onVisibilityClick: (Boolean) -> Unit = {},
-    navigateToSettings: () -> Unit = {}
+    navigateToSettings: () -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
     val isTittleExpand = if (scrollBehavior.state.collapsedFraction < 0.8f) true else false
 
@@ -94,6 +97,11 @@ fun ListTopAppBar(
                     modifier = Modifier.weight(1f)
                 )
 
+                RetryIconButton(
+                    modifier = Modifier.height(24.dp),
+                    onClick = onRefresh
+                )
+
                 ListVisibilityIconButton(
                     modifier = Modifier.height(24.dp),
                     isVisibleOff = isFiltered,
@@ -106,6 +114,7 @@ fun ListTopAppBar(
                     modifier = Modifier.height(24.dp),
                     onClick = navigateToSettings
                 )
+
             }
 
         },
@@ -129,7 +138,13 @@ fun CollapsedTitle(
     doneTasks: Int,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    val expandedStateDescription =
+        stringResource(R.string.top_bar) +
+                if (isExpanded) stringResource(R.string.expanded)
+                else stringResource(R.string.collapsed)
+    Column(modifier = modifier.semantics(mergeDescendants = true) {
+        stateDescription = expandedStateDescription
+    }) {
         Text(
             text = stringResource(R.string.todolist_title),
             color = ExtendedTheme.colors.labelPrimary,

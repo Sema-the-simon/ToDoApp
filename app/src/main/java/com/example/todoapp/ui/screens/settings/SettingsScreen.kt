@@ -53,10 +53,11 @@ fun SettingsScreen(
             Divider(
                 PaddingValues(vertical = 8.dp, horizontal = 24.dp),
             )
+            val onClickLabel = stringResource(R.string.info_button_description)
             Row(
                 modifier = Modifier
                     .padding(all = 15.dp)
-                    .clickable { navigateToInfo() }
+                    .clickable(onClickLabel = onClickLabel) { navigateToInfo() }
             ) {
                 Text(text = stringResource(R.string.navigate_info_button))
             }

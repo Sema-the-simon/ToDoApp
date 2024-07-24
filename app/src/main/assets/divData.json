@@ -43,6 +43,9 @@
         "next_page_alpha": 0.7,
         "previous_page_scale": 0.85,
         "previous_page_alpha": 0.7
+      },
+      "accessibility" : {
+        "description" : "Галерея карточек, для прокручивания используйте жест свайпа двумя пальцами"
       }
     },
     "welcome_pager_indicator": {
@@ -114,7 +117,10 @@
         "top": 24,
         "bottom": 12
       },
-      "$items": "content"
+      "$items": "content",
+      "accessibility" : {
+        "description" : "Карточка в галерее"
+      }
     },
     "inner_title": {
       "type": "text",
@@ -242,6 +248,19 @@
           }
         }
       ]
+    },
+    "page_end" : {
+      "type":"container",
+      "width": {
+        "type": "match_parent"
+      },
+      "height": {
+        "type": "fixed",
+        "value": 25
+      },
+      "accessibility" : {
+        "description": "конец карточки, сделайте свайп чтобы переключиться на следующую"
+      }
     }
   },
   "card": {
@@ -323,6 +342,9 @@
                               "color": "#15000f"
                             }
                           }
+                        },
+                        {
+                          "type" : "page_end"
                         }
                       ]
                     },
@@ -347,6 +369,9 @@
                         {
                           "type": "inner_subtitle",
                           "text": "Весь исходный код размещен по ссылке:\n https://github.com/Sema-the-simon/ToDoApp"
+                        },
+                        {
+                          "type" : "page_end"
                         }
                       ]
                     },
@@ -359,6 +384,9 @@
                         },
                         {
                           "type": "interactive_pic"
+                        },
+                        {
+                          "type" : "page_end"
                         }
                       ]
                     }
