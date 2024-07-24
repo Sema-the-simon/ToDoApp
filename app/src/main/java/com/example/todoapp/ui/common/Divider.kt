@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.screens.edit.components
+package com.example.todoapp.ui.common
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,12 +9,13 @@ import androidx.compose.ui.Modifier
 import com.example.todoapp.ui.themes.ExtendedTheme
 
 @Composable
-fun EditDivider(
-    padding: PaddingValues
+fun Divider(
+    padding: PaddingValues,
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
 ) {
     HorizontalDivider(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(padding),
         color = ExtendedTheme.colors.supportSeparator
     )

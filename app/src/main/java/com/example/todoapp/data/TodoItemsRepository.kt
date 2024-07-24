@@ -3,18 +3,18 @@ package com.example.todoapp.data
 import com.example.todoapp.data.datastore.PreferencesManager
 import com.example.todoapp.data.db.TodoItemDao
 import com.example.todoapp.data.db.TodoItemInfoTuple
-import com.example.todoapp.data.db.entities.toEntity
 import com.example.todoapp.data.network.Api
 import com.example.todoapp.data.network.model.RequestBody
 import com.example.todoapp.data.network.model.ResponseResult
-import com.example.todoapp.data.network.model.asDto
 import com.example.todoapp.data.network.model.handle
-import com.example.todoapp.data.network.model.toTodoItem
 import com.example.todoapp.di.ApplicationScope
 import com.example.todoapp.di.DefaultDispatcher
 import com.example.todoapp.domain.Repository
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.model.UserError
+import com.example.todoapp.utils.asDto
+import com.example.todoapp.utils.toEntity
+import com.example.todoapp.utils.toTodoItem
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -113,7 +113,7 @@ class TodoItemsRepository @Inject constructor(
             }
         } else {
             if (isDataLoading) {
-                delay(10)
+                delay(100)
                 isDataLoading = false
                 errorMessage = UserError.NoInternetConnection
             }
@@ -145,9 +145,9 @@ class TodoItemsRepository @Inject constructor(
             val result = api.getTodoList()
             result.handle(
                 onSuccess = { data ->
-                    val newElements = data.list.map { it.toTodoItem() }
+                    val dataFromServer = data.list.map { it.toTodoItem() }
                     revision = data.revision
-                    updateTodoItemsInDataBase(newElements)
+                    updateTodoItemsInDataBase(dataFromServer)
                     isDataLoading = false
                     syncWithServer()
                     isDataSynchronized = true
@@ -157,27 +157,29 @@ class TodoItemsRepository @Inject constructor(
         }
     }
 
-    private suspend fun updateTodoItemsInDataBase(newItems: List<TodoItem>) {
-        val currentItems = hashMapOf<String, TodoItemInfoTuple>()
+    private suspend fun updateTodoItemsInDataBase(remoteData: List<TodoItem>) {
+        val localData = hashMapOf<String, TodoItemInfoTuple>()
         todoItemDao.getAllTodoData().forEach { el ->
-            currentItems[el.id] = el
+            localData[el.id] = el
         }
-        for (newEl in newItems) {
-            if (newEl.id in currentItems.keys) {
-                val curEl = currentItems[newEl.id]!!
-                if (curEl.isDeleted) {
-                    todoItemDao.deleteTodoDataById(curEl.id)
-                    //currentItems.remove(newEl.id)
-                    continue
+        for (remoteElement in remoteData) {
+            if (remoteElement.id !in localData.keys) {
+                todoItemDao.insertNewTodoItemData(remoteElement.toEntity())
+            } else {
+                val localElement = localData[remoteElement.id]!!
+                val serverModification = remoteElement.modificationDate ?: 0L
+                val databaseModification = localElement.changedAt
+                when {
+                    localElement.isDeleted -> {
+                        todoItemDao.deleteTodoDataById(localElement.id)
+                    }
+
+                    serverModification >= databaseModification
+                            && remoteElement != localElement.toTodoItem() -> {
+                        todoItemDao.updateTodoData(remoteElement.toEntity())
+                    }
                 }
-                val serverModification = newEl.modificationDate ?: 0L
-                val databaseModification = curEl.changedAt
-                if (newEl != currentItems[newEl.id]!!.toTodoItem() && serverModification >= databaseModification) {
-                    todoItemDao.updateTodoData(newEl.toEntity())
-                } else
-                    continue
-            } else (newEl.id !in currentItems.keys)
-            todoItemDao.insertNewTodoItemData(newEl.toEntity())
+            }
         }
         todoItemDao.clearDeleted()
     }
@@ -233,11 +235,39 @@ class TodoItemsRepository @Inject constructor(
         }
     }
 
+    override suspend fun removeItems(ids: List<String>) = withContext(defaultDispatcher) {
+        val items = ids.map { id -> getTodoItem(id)!! }
+        items.forEach { item -> todoItemDao.updateTodoData(item.toEntity(isDeleted = true)) }
+        synchronizedNetworkRun {
+            val newElements = todoItems.value.toMutableList().also { it.removeAll(items) }
+            val result = api.updateList(revision, createListRequest(newElements))
+            result.handle(
+                onSuccess = { data ->
+                    revision = data.revision
+                    items.forEach { todoItemDao.deleteTodoDataById(it.id) }
+                },
+                onError = handleServerError,
+            )
+        }
+    }
+
     override suspend fun getTodoItem(id: String): TodoItem? = withContext(defaultDispatcher) {
         todoItems.value.firstOrNull { it.id == id }
     }
 
     override suspend fun clearErrorMessage() {
         errorMessage = null
+    }
+
+    override suspend fun addInUndoStack(todoItem: TodoItem) {
+        dataState.value.undoElementsStack.add(todoItem)
+    }
+
+    override suspend fun removeLastInUndoStack() {
+        dataState.value.undoElementsStack.removeLast()
+    }
+
+    override suspend fun clearUndoStack() {
+        dataState.value.undoElementsStack.clear()
     }
 }

@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.0"
 datastore = "1.1.1"
+div = "30.9.0"
 hilt = "1.2.0"
 kotlin = "2.0.0"
 activityCompose = "1.9.0"
@@ -71,6 +72,10 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+div = { module = "com.yandex.div:div", version.ref = "div" }
+div-core = { module = "com.yandex.div:div-core", version.ref = "div" }
+div-json = { module = "com.yandex.div:div-json", version.ref = "div" }
+picasso = { module = "com.yandex.div:picasso", version.ref = "div" }
 
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 slf4j-android = { module = "org.slf4j:slf4j-android", version.ref = "slf4jAndroid" }

@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.example.todoapp.ui.common.Divider
 import com.example.todoapp.ui.screens.edit.action.EditUiAction
 import com.example.todoapp.ui.screens.edit.action.EditUiEvent
 import com.example.todoapp.ui.screens.edit.components.EditDeadlineField
 import com.example.todoapp.ui.screens.edit.components.EditDeleteButton
-import com.example.todoapp.ui.screens.edit.components.EditDivider
 import com.example.todoapp.ui.screens.edit.components.EditImportanceField
 import com.example.todoapp.ui.screens.edit.components.EditTextField
 import com.example.todoapp.ui.screens.edit.components.EditTopAppBar
@@ -90,14 +90,14 @@ fun EditScreen(
                 importance = uiState.importance,
                 uiAction = onUiAction
             )
-            EditDivider(padding = PaddingValues(horizontal = 16.dp))
+            Divider(padding = PaddingValues(horizontal = 16.dp))
             EditDeadlineField(
                 deadline = uiState.deadline,
                 isDeadlineSet = uiState.isDeadlineSet,
                 isDialogOpen = uiState.isDialogVisible,
                 uiAction = onUiAction
             )
-            EditDivider(padding = PaddingValues(top = 16.dp, bottom = 8.dp))
+            Divider(padding = PaddingValues(top = 16.dp, bottom = 8.dp))
             EditDeleteButton(
                 enabled = uiState.text.isNotBlank(),
                 onClick = {
@@ -111,7 +111,7 @@ fun EditScreen(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, locale = "ru")
 @Composable
-fun PreviewListScreen(
+fun PreviewEditScreen(
     @PreviewParameter(ThemePreview::class) isDarkTheme: Boolean
 ) {
     TodoAppTheme(isDarkTheme) {

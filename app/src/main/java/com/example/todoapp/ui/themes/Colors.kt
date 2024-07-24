@@ -1,5 +1,7 @@
 package com.example.todoapp.ui.themes
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -7,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 /**
  * Defines color values and provides a structured way to manage color schemes for the TodoApp.
  * Includes light and dark color palettes and an `ExtendedColors` data class to encapsulate them.
-*/
+ */
 
 
 val Red = Color(0xFFFF3B30)
@@ -78,3 +80,48 @@ val darkExtendedColors = ExtendedColors(
 val LocalExtendedColors = staticCompositionLocalOf {
     ExtendedColors()
 }
+
+val LightColorScheme = lightColorScheme(
+    background = LightBackPrimary,
+    onBackground = LightLabelPrimary,
+    surface = LightBackPrimary,
+    onSurface = LightLabelPrimary,
+    surfaceTint = DarkLabelTertiary,
+    surfaceContainerHigh = Blue,
+    onSurfaceVariant = White,
+    inverseSurface = DarkBackPrimary,
+    inverseOnSurface = DarkLabelPrimary,
+    primary = Blue,
+    primaryContainer = Blue,
+    onPrimaryContainer = White,
+    onPrimary = White,
+    inversePrimary = White,
+    secondary = LightBackSecondary,
+    onSecondary = LightLabelSecondary,
+    error = Red,
+    onError = White,
+    onErrorContainer = White,
+    errorContainer = Red,
+)
+val DarkColorScheme = darkColorScheme(
+    background = DarkBackPrimary,
+    onBackground = DarkLabelPrimary,
+    surface = DarkBackPrimary,
+    onSurface = DarkLabelPrimary,
+    surfaceTint = LightLabelTertiary,
+    surfaceContainerHigh = Blue,
+    onSurfaceVariant = White,
+    inverseSurface = LightBackPrimary,
+    inverseOnSurface = LightLabelPrimary,
+    primary = Blue,
+    primaryContainer = Blue,
+    onPrimaryContainer = White,
+    onPrimary = White,
+    inversePrimary = White,
+    secondary = DarkBackSecondary,
+    onSecondary = DarkLabelSecondary,
+    error = Red,
+    onError = White,
+    onErrorContainer = White,
+    errorContainer = Red,
+)

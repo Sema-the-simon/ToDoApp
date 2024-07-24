@@ -31,9 +31,9 @@ abstract class ApkReportTask @Inject constructor(
 
         apkDir.get().asFile.listFiles()
             ?.filter { it.name.endsWith(".apk") }
-            ?.forEach { apkFike ->
-                val reportFile = File("${apkFike.parent}/apk_details.txt")
-                val report = analyzeApk(apkFike)
+            ?.forEach { apkFile ->
+                val reportFile = File("${apkFile.parent}/apk_details.txt")
+                val report = analyzeApk(apkFile)
                 reportFile.writeText(report)
                 runBlocking {
                     telegramApi.upload(reportFile, token, chatId).apply {

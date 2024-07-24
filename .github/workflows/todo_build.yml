@@ -12,6 +12,13 @@ env:
   TG_CHAT: ${{ secrets.TG_CHAT }}
   TG_TOKEN: ${{ secrets.TG_TOKEN }}
 
+  API_TOKEN: ${{ secrets.API_TOKEN }}
+
+  KEYSTORE_JKS_BASE_64: ${{ secrets.KEYSTORE_JKS_BASE_64 }}
+  KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+  KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+
 jobs:
   build-and-report:
     runs-on: ubuntu-latest
@@ -27,6 +34,13 @@ jobs:
       - name: Grant execute permission for gradlew
         shell: bash
         run: chmod +x gradlew
+
+      - name: "[Signing Release APK 🔑] upload jks file"
+        run: |
+          mkdir $HOME/keystores
+          cd $HOME/keystores
+          echo "$KEYSTORE_JKS_BASE_64" | base64 --decode > release_upload_keystore.jks
+
       - name: Build with Gradle
         run: ./gradlew :app:reportTelegramApkForRelease $gradleFlags
       - name: Upload my apk

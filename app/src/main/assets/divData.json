@@ -1,0 +1,418 @@
+{
+  "templates": {
+    "title": {
+      "type": "text",
+      "font_size": 20,
+      "line_height": 24,
+      "font_weight": "bold",
+      "width": {
+        "type": "wrap_content"
+      },
+      "alignment_horizontal": "center",
+      "text_alignment_horizontal": "center",
+      "paddings": {
+        "left": 24,
+        "right": 24,
+        "bottom": 16
+      }
+    },
+    "welcome_pager": {
+      "type": "pager",
+      "id": "welcome_pager_id",
+      "item_spacing": {
+        "type": "fixed",
+        "value": 0
+      },
+      "height": {
+        "type": "match_parent"
+      },
+      "layout_mode": {
+        "type": "percentage",
+        "page_width": {
+          "type": "percentage",
+          "value": "@{percentage}"
+        }
+      },
+      "paddings": {
+        "right": 12,
+        "left": 12
+      },
+      "page_transformation": {
+        "type": "overlap",
+        "next_page_scale": 0.85,
+        "next_page_alpha": 0.7,
+        "previous_page_scale": 0.85,
+        "previous_page_alpha": 0.7
+      }
+    },
+    "welcome_pager_indicator": {
+      "type": "indicator",
+      "active_item_color": "#000000",
+      "active_item_size": 1.5,
+      "height": {
+        "type": "fixed",
+        "value": 10
+      },
+      "margins": {
+        "top": 10,
+        "bottom": 10
+      },
+      "space_between_centers": 10,
+      "inactive_item_color": "#D0D1D9",
+      "pager_id": "welcome_pager_id",
+      "shape": {
+        "type": "rounded_rectangle",
+        "corner_radius": {
+          "type": "fixed",
+          "value": 4
+        },
+        "item_height": {
+          "type": "fixed",
+          "value": 4
+        },
+        "item_width": {
+          "type": "fixed",
+          "value": 8
+        }
+      }
+    },
+    "page": {
+      "type": "container",
+      "height": {
+        "type": "match_parent"
+      },
+      "width": {
+        "type": "match_parent"
+      },
+      "background": [
+        {
+          "type": "solid",
+          "color": "#@{app_theme == 'light' ? 'FFFFFF' : '252528'}"
+        }
+      ],
+      "border": {
+        "has_shadow": true,
+        "shadow": {
+          "offset": {
+            "x": {
+              "value": 6
+            },
+            "y": {
+              "value": 12
+            }
+          },
+          "blur": 7,
+          "alpha": 0.5
+        }
+      },
+      "content_alignment_horizontal": "center",
+      "content_alignment_vertical": "top",
+      "paddings": {
+        "top": 24
+      },
+      "margins": {
+        "top": 24,
+        "bottom": 12
+      },
+      "$items": "content"
+    },
+    "inner_title": {
+      "type": "text",
+      "font_size": 20,
+      "text_color": "#@{app_theme == 'light' ? '99000000' : '99FFFFFF'}",
+      "line_height": 24,
+      "font_weight": "bold",
+      "paddings": {
+        "left": 24,
+        "right": 24,
+        "bottom": 16
+      },
+      "text_alignment_horizontal": "center"
+    },
+    "inner_subtitle": {
+      "type": "text",
+      "font_size": 15,
+      "text_color": "#@{app_theme == 'light' ? '99000000' : '99FFFFFF'}",
+      "line_height": 20,
+      "paddings": {
+        "left": 24,
+        "right": 24
+      }
+    },
+    "profile": {
+      "type": "container",
+      "items": [
+        {
+          "type": "image",
+          "image_url": "https://github.com/Sema-the-simon/ToDoApp/blob/master/profile.jpg?raw=true",
+          "preview": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAAUAA8DAREAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAwQGB//EACQQAAICAQMEAgMAAAAAAAAAAAECAwQRABIhBQYTMRRBI3Hw/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgP/xAAcEQEAAgIDAQAAAAAAAAAAAAABAAIDEQQhMSL/2gAMAwEAAhEDEQA/AKjrsl97iV61tacQQPvxy5yeP1xqGW7V0S+KhYVjHb892VLC3Z47GxxskRcZBHIONLHZsdwZKlXqK9btVPmeNXV50T8iqNxjH0SNSznjK8d9Ift63UlWWKORRZU5eI8MB9HH971TCfO4Mzu0ymjdmpXBajO6TOGD8hgfedKwJphqo9QJnlay1jyOszksXViDk+9INEO9s//Z",
+          "width": {
+            "type": "fixed",
+            "value": 150
+          },
+          "aspect": {
+            "ratio": "${4/3}"
+          },
+          "border": {
+            "corner_radius": 64,
+            "stroke": {
+              "color": "#15000f"
+            }
+          },
+          "alignment_horizontal": "center",
+          "actions": [
+            {
+              "log_id": "switch_state1",
+              "url": "div-action://set_state?state_id=0/pic/base"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Это Я",
+          "text_color": "#@{app_theme == 'light' ? '000000' : 'FFFFFF'}",
+          "text_alignment_horizontal": "center",
+          "font_size": "20",
+          "font_weight": "bold"
+        },
+        {
+          "type": "inner_subtitle",
+          "text": "Буглаев Семен, Android-разработчик. \n  По всем вопросам, багам и неловольствам писать не надо мне их и без вас хватает. И вообще не ищите мой"
+        },
+        {
+          "type": "inner_subtitle",
+          "text": "tg:@MrSemik",
+          "underline": "single",
+          "text_color": "#2c75ff",
+          "actions": [
+            {
+              "log_id": "navigation_back",
+              "url": "nav-action://redirect?https://t.me/MrSemik"
+            }
+          ]
+        }
+      ]
+    },
+    "interactive_pic": {
+      "type": "state",
+      "id": "pic",
+      "states": [
+        {
+          "state_id": "base",
+          "div": {
+            "type": "container",
+            "items": [
+              {
+                "type": "image",
+                "image_url": "https://github.com/Sema-the-simon/ToDoApp/blob/master/happyface.png?raw=true",
+                "preview": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAANABcDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAABAIDBf/EACUQAAIBAwIGAwEAAAAAAAAAAAECAwQREgAiBSFBYXGRFFGBsf/EABcBAQEBAQAAAAAAAAAAAAAAAAQDAQL/xAAbEQADAAMBAQAAAAAAAAAAAAAAAQIDBBIRIf/aAAwDAQACEQMRAD8A2eHQD4ZilYjJiRuse3740KVyIx4uFz6XpTzuHjmqJQFbk3RlPTW9FvPgevS1Mqx7gll2WBPj6trioVP1kcmFW16yFLUAyyIIkVBGsmPe5H8t603alKiWrbqfokwuJcs1wHPHAX96GNAVNS0/EFhYbFhVwOlyeem60p0A2m+T/9k=",
+                "width": {
+                  "type": "fixed",
+                  "value": 250
+                },
+                "aspect": {
+                  "ratio": 1.5
+                },
+                "border": {
+                  "corner_radius": 64,
+                  "stroke": {
+                    "color": "#15000f"
+                  }
+                },
+                "alignment_horizontal": "center"
+              },
+              {
+                "type": "inner_subtitle",
+                "text": "(Кликабельно)\n\n",
+                "text_alignment_horizontal": "center"
+              }
+            ],
+            "actions": [
+              {
+                "log_id": "switch_state1",
+                "url": "div-action://set_state?state_id=0/pic/advanced"
+              }
+            ]
+          }
+        },
+        {
+          "state_id": "advanced",
+          "div": {
+            "type": "profile"
+          }
+        }
+      ]
+    }
+  },
+  "card": {
+    "log_id": "info_screen",
+    "variables": [
+      {
+        "name": "percentage",
+        "type": "integer",
+        "value": 80
+      }
+    ],
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "width": {
+            "type": "match_parent"
+          },
+          "height": {
+            "type": "match_parent"
+          },
+          "orientation": "vertical",
+          "background": [
+            {
+              "type": "solid",
+              "color": "#@{app_theme == 'light' ? 'F7F6F2' : '161618'}"
+            }
+          ],
+          "paddings": {
+            "top": 20
+          },
+          "items": [
+            {
+              "type": "title",
+              "text": "Приветсвуем в TodoApp,\nДавай запланируем твой день.",
+              "text_color": "#@{app_theme == 'light' ? '000000' : 'FFFFFF'}"
+            },
+            {
+              "type": "container",
+              "background": [
+                {
+                  "type": "solid",
+                  "color": "#@{app_theme == 'light' ? 'F7F6F2' : '161618'}"
+                }
+              ],
+              "height": {
+                "type": "match_parent"
+              },
+              "items": [
+                {
+                  "type": "welcome_pager",
+                  "items": [
+                    {
+                      "type": "page",
+                      "content": [
+                        {
+                          "type": "inner_title",
+                          "text": "О приложении"
+                        },
+                        {
+                          "type": "inner_subtitle",
+                          "text": "     Проект, разрабатываемый в рамках обучения в Школе Мобильной Разработки Яндекса.\n\n. Данное приложение позволяет вести список дел, а именно:\n     - Создавать\n     - Хранить\n     - Изменять\n     - Удалять ",
+                          "margins": {
+                            "bottom": 12
+                          }
+                        },
+                        {
+                          "type": "image",
+                          "image_url": "https://github.com/Sema-the-simon/ToDoApp/blob/master/todolist.jpg?raw=true",
+                          "preview": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAAPABoDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwUB/8QAJhAAAgECBAUFAAAAAAAAAAAAAQIDABEEEiGRExQiMVJBUWFx0f/EABgBAAMBAQAAAAAAAAAAAAAAAAIDBAEF/8QAHhEAAwEAAgIDAAAAAAAAAAAAAAECEQMEMVESEyH/2gAMAwEAAhEDEQA/ALHLAN6n7qRZos1ZI85C3YggZMOhOvsW/TT0kBoGIjk4hYxFF72JuV2qa9TOl1Vx1GV5D6PAb1nyDfSXsoYsskbMpGnxR6R8MK7yijEoSFOokFQe1OXgnucppBYhULAgG1tTQWbP4BwIvEbUrEO+yvZ//9k=",
+                          "margins": {
+                            "left": 16,
+                            "right": 16
+                          },
+                          "border": {
+                            "corner_radius": 16,
+                            "stroke": {
+                              "color": "#15000f"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "page",
+                      "content": [
+                        {
+                          "type": "inner_title",
+                          "text": "В приложении используются:"
+                        },
+                        {
+                          "type": "inner_subtitle",
+                          "text": "Библиотеки:\n  - Jetpack Compose, для UI\n  - Room, для локальной базы данных\n  - Ktor, для выполнения сетевых запросов к серверу\n  - DivKit, для отрисовки этого экрана :))",
+                          "margins": {
+                            "bottom": 12
+                          }
+                        },
+                        {
+                          "type": "inner_title",
+                          "text": "Код приложения:"
+                        },
+                        {
+                          "type": "inner_subtitle",
+                          "text": "Весь исходный код размещен по ссылке:\n https://github.com/Sema-the-simon/ToDoApp"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "page",
+                      "content": [
+                        {
+                          "type": "inner_title",
+                          "text": "Разработчик:"
+                        },
+                        {
+                          "type": "interactive_pic"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "welcome_pager_indicator"
+                },
+                {
+                  "type": "text",
+                  "text": "Назад",
+                  "text_color": "#ffff",
+                  "font_size": 18,
+                  "width": {
+                    "type": "match_parent"
+                  },
+                  "text_alignment_horizontal": "center",
+                  "margins": {
+                    "top": 8,
+                    "end": 64,
+                    "start": 64,
+                    "bottom": 18
+                  },
+                  "paddings": {
+                    "top": 10,
+                    "end": 8,
+                    "start": 8,
+                    "bottom": 10
+                  },
+                  "border": {
+                    "corner_radius": 32
+                  },
+                  "background": [
+                    {
+                      "type": "radial_gradient",
+                      "colors": [
+                        "#0091d9",
+                        "#7ad3ff",
+                        "#0091d9"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "log_id": "navigation_back",
+                      "url": "nav-action://navigation?back"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

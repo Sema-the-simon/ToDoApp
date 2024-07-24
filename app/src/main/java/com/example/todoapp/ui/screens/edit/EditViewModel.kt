@@ -129,7 +129,7 @@ class EditViewModel @Inject constructor(
     private fun removeTodoItem() {
         if (!isNewItem)
             viewModelScope.launch {
-                repository.removeItem(todoItem.id)
+                repository.addInUndoStack(todoItem)
             }
     }
 
@@ -138,7 +138,7 @@ class EditViewModel @Inject constructor(
 data class EditUiState(
     val text: String = "",
     val importance: Importance = Importance.BASIC,
-    val deadline: Long = System.currentTimeMillis(),
+    val deadline: Long? = null,
     val isDeadlineSet: Boolean = false,
     val isNewItem: Boolean = true,
     val isDialogVisible: Boolean = false
