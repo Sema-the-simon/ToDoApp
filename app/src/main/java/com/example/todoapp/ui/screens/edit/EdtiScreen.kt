@@ -44,10 +44,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditScreen(
+    id: String?,
     uiState: EditUiState,
     uiEvent: EditUiEvent?,
     onUiAction: (EditUiAction) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: (hideElementId: String?) -> Unit
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -69,7 +70,7 @@ fun EditScreen(
             EditTopAppBar(
                 isButtonEnable = uiState.text.isNotBlank(),
                 uiAction = onUiAction,
-                navigateUp = navigateUp
+                navigateUp = { navigateUp(null) }
             )
         },
         containerColor = ExtendedTheme.colors.backPrimary
@@ -102,7 +103,7 @@ fun EditScreen(
                 enabled = uiState.text.isNotBlank(),
                 onClick = {
                     onUiAction(EditUiAction.DeleteTask)
-                    navigateUp()
+                    navigateUp(id)
                 }
             )
         }
@@ -116,6 +117,7 @@ fun PreviewEditScreen(
 ) {
     TodoAppTheme(isDarkTheme) {
         EditScreen(
+            "",
             EditUiState(
                 "Lorem ipsum dolor sit amet, consectetur ",
                 isDeadlineSet = true,

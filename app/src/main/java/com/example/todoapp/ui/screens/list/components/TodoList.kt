@@ -17,6 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -72,13 +75,18 @@ fun TodoList(
             )
         }
         item {
+            val description = stringResource(R.string.create_new_task)
             TextButton(
                 onClick = {
                     onItemClick(null)
                 },
-                modifier = Modifier.animateItem(
-                    placementSpec = tween(durationMillis = 200)
-                )
+                modifier = Modifier
+                    .animateItem(
+                        placementSpec = tween(durationMillis = 200)
+                    )
+                    .semantics {
+                        contentDescription = description
+                    }
             ) {
                 Text(
                     text = stringResource(R.string.add_new_task_text_field),
@@ -87,6 +95,7 @@ fun TodoList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 42.dp, top = 8.dp, bottom = 8.dp)
+                        .clearAndSetSemantics {  }
                 )
             }
         }

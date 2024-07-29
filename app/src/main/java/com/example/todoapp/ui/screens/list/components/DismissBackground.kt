@@ -24,7 +24,6 @@ import com.example.todoapp.ui.themes.Green
 import com.example.todoapp.ui.themes.Red
 import com.example.todoapp.ui.themes.White
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DismissBackground(
     dismissState: SwipeToDismissBoxState,
