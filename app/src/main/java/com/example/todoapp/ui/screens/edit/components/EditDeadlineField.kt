@@ -27,6 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -49,6 +52,8 @@ fun EditDeadlineField(
     isDialogOpen: Boolean,
     uiAction: (EditUiAction) -> Unit
 ) {
+    val deadlineState = if (isDeadlineSet) stringResource(R.string.enable) else
+        stringResource(R.string.disable)
     Row(
         modifier = Modifier
             .background(ExtendedTheme.colors.backPrimary)
@@ -62,9 +67,10 @@ fun EditDeadlineField(
                 formatLongToDatePattern(deadline)
             } else ""
         }
+        val onCLickLabel = stringResource(R.string.change_deadline)
         Column(
-            if (deadline != null)
-                Modifier.clickable {
+            if (isDeadlineSet)
+                Modifier.clickable(onClickLabel = onCLickLabel) {
                     uiAction(EditUiAction.UpdateDialogVisibility(true))
                 }
             else
@@ -72,7 +78,11 @@ fun EditDeadlineField(
         ) {
             Text(
                 text = stringResource(id = R.string.deadline_title),
-                modifier = Modifier.padding(start = 5.dp),
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .semantics {
+                        stateDescription = deadlineState
+                    },
                 color = ExtendedTheme.colors.labelPrimary
             )
             AnimatedVisibility(visible = isDeadlineSet) {
@@ -81,6 +91,7 @@ fun EditDeadlineField(
                 }
             }
         }
+        val switchDescription = stringResource(R.string.deadline_switch_description)
         Switch(
             checked = isDeadlineSet,
             onCheckedChange = { checked ->
@@ -95,7 +106,10 @@ fun EditDeadlineField(
                 uncheckedThumbColor = ExtendedTheme.colors.backElevated,
                 uncheckedTrackColor = ExtendedTheme.colors.supportOverlay,
                 uncheckedBorderColor = ExtendedTheme.colors.supportOverlay,
-            )
+            ),
+            modifier = Modifier.semantics {
+                contentDescription = switchDescription
+            }
         )
         if (isDialogOpen) {
             DeadlineDatePicker(

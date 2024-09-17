@@ -19,7 +19,11 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +40,7 @@ import com.example.todoapp.ui.themes.ExtendedTheme
 import com.example.todoapp.ui.themes.ThemePreview
 import com.example.todoapp.ui.themes.TodoAppTheme
 import com.example.todoapp.utils.formatLongToDatePattern
+import com.example.todoapp.utils.toStringResource
 
 @Composable
 fun TodoListItem(
@@ -44,9 +49,18 @@ fun TodoListItem(
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val taskDoneState = if (todoItem.isDone) stringResource(R.string.done) else stringResource(R.string.not_done)
+    val taskImportanceState = stringResource(todoItem.importance.toStringResource())
+    val taskStateDescription =
+        stringResource(R.string.task_state_description, taskDoneState, taskImportanceState)
+    val taskContent = stringResource(R.string.task_text_description, todoItem.text)
     Row(
         modifier = modifier
-            .background(ExtendedTheme.colors.backSecondary),
+            .background(ExtendedTheme.colors.backSecondary)
+            .semantics(mergeDescendants = true) {
+
+            },
         verticalAlignment = Alignment.Top
     ) {
         Checkbox(
@@ -73,11 +87,14 @@ fun TodoListItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clickable { onItemClick() }
+                .clickable(onClickLabel = stringResource(R.string.on_item_click_description)) { onItemClick() }
                 .padding(vertical = 12.dp)
+                .semantics(mergeDescendants = true) {
+                    stateDescription = taskStateDescription
+                    contentDescription = taskContent
+                }
 
         ) {
-
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -98,7 +115,8 @@ fun TodoListItem(
                         style = ExtendedTheme.typography.body.copy(
                             textDecoration = if (todoItem.isDone) TextDecoration.LineThrough
                             else TextDecoration.None
-                        )
+                        ),
+                        modifier = Modifier.clearAndSetSemantics {  }
                     )
                 }
                 if (todoItem.deadline != null)
@@ -111,7 +129,7 @@ fun TodoListItem(
 
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "Todo info",
+                contentDescription = null,
                 tint = ExtendedTheme.colors.supportSeparator,
                 modifier = Modifier.padding(end = 12.dp)
             )

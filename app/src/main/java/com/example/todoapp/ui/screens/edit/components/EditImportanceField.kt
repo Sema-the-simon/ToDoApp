@@ -35,13 +35,14 @@ fun EditImportanceField(
     val isImportant = remember(importance) { importance == Importance.IMPORTANT }
     var expanded by remember { mutableStateOf(false) }
 
+    val onClickLabel = stringResource(R.string.change_importance)
     Column(
         modifier = Modifier
             .background(ExtendedTheme.colors.backPrimary)
             .padding(horizontal = 15.dp)
             .padding(top = 20.dp, bottom = 15.dp)
             .clip(RoundedCornerShape(5.dp))
-            .clickable { expanded = !expanded }
+            .clickable(onClickLabel = onClickLabel) { expanded = !expanded }
     ) {
         Text(
             text = stringResource(id = R.string.importance_title),

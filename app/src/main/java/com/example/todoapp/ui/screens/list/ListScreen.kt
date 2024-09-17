@@ -29,6 +29,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.example.todoapp.R
@@ -95,8 +101,10 @@ fun ListScreen(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
+
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).semantics { isTraversalGroup = true },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 if (data.visuals.withDismissAction) {
@@ -116,7 +124,9 @@ fun ListScreen(
                         needToScroll = true
                     }
                 },
-                navigateToSettings = navigateToSettings
+                navigateToSettings = navigateToSettings,
+                onRefresh = { onUiAction(ListUiAction.RefreshList) },
+                modifier = Modifier
             )
         },
         floatingActionButton = {
@@ -126,7 +136,7 @@ fun ListScreen(
                 containerColor = Blue,
                 contentColor = White
             ) {
-                Icon(Icons.Rounded.Add, contentDescription = null)
+                Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.create_new_task))
             }
         },
         containerColor = ExtendedTheme.colors.backPrimary

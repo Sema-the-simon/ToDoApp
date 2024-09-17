@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -152,9 +153,11 @@ private fun SnackbarCountdown(
         },
         label = "timer color"
     )
+    val textMeasurer = rememberTextMeasurer()
 
+    val size = textMeasurer.measure(secondsRemaining.toString()).size.height / 2
     Box(
-        modifier = Modifier.size(24.dp),
+        modifier = Modifier.size(size.dp),
         contentAlignment = Alignment.Center
     ) {
         Canvas(Modifier.matchParentSize()) {
@@ -192,7 +195,7 @@ private fun CountdownSnackbarPreview(
     class MyData(
         override val visuals: SnackbarVisuals = object : SnackbarVisuals {
             override val actionLabel: String
-                get() = "ОТМЕНИТЬ"
+                get() = "Отмена"
             override val duration: SnackbarDuration
                 get() = SnackbarDuration.Indefinite
             override val message: String
